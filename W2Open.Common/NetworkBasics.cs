@@ -8,7 +8,7 @@
         /// <summary>
         /// Max packet length in bytes.
         /// </summary>
-        public const int MAXL_PACKET = 8000;
+        public const int MAX_PACKET_LENGTH = 8000;
 
         /// <summary>
         /// Code used in the game network protocol to initiate the connection. Every player must send this 4-byte value as the first packet.

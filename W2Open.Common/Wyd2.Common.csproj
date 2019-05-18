@@ -7,8 +7,8 @@
     <ProjectGuid>{9E37305B-BADD-49E4-842A-FC45B8CE0B95}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Wyd2.Common</RootNamespace>
-    <AssemblyName>Wyd2.Common</AssemblyName>
+    <RootNamespace>WYD2.Common</RootNamespace>
+    <AssemblyName>WYD2.Common</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -45,8 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameBasics.cs" />
-    <Compile Include="GameStructure\MAccountFile.cs" />
-    <Compile Include="GameStructure\MAccountInfo.cs" />
     <Compile Include="GameStructure\MAffect.cs" />
     <Compile Include="GameStructure\MGeometry.cs" />
     <Compile Include="GameStructure\MItem.cs" />
@@ -55,11 +53,15 @@
     <Compile Include="GameStructure\MPacketHeader.cs" />
     <Compile Include="GameStructure\MScore.cs" />
     <Compile Include="GameStructure\MSelChar.cs" />
-    <Compile Include="IncomingPacketStructure\MAccountLoginPacket.cs" />
-    <Compile Include="IncomingPacketStructure\MPingPacket.cs" />
+    <Compile Include="IncomingPacketStructure\MResendCharList.cs" />
+    <Compile Include="OutgoingPacketStructure\MAccountLoginPacket.cs" />
+    <Compile Include="OutgoingPacketStructure\MPingPacket.cs" />
+    <Compile Include="OutgoingPacketStructure\MRequestMobLogin.cs" />
+    <Compile Include="OutgoingPacketStructure\MTokenPacket.cs" />
     <Compile Include="NetworkBasics.cs" />
-    <Compile Include="OutgoingPacketStructure\MLoginSuccessfulPacket.cs" />
-    <Compile Include="OutgoingPacketStructure\MTextMessagePacket.cs" />
+    <Compile Include="IncomingPacketStructure\MLoginSuccessfulPacket.cs" />
+    <Compile Include="IncomingPacketStructure\MTextMessagePacket.cs" />
+    <Compile Include="OutgoingPacketStructure\MCreateCharacterPacket.cs" />
     <Compile Include="ProjectBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\CCompoundBuffer.cs" />

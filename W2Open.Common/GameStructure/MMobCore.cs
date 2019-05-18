@@ -47,13 +47,20 @@ namespace WYD2.Common.GameStructure
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAXL_NAME)]
         public String Value;
+
+        public string Name { get => Value; }
+
+        public MMobName(string name)
+        {
+            Value = name;
+        }
     }
 
     /// <summary>
     /// The basic mob structure. Contains the first structure create to represent the mob in the game.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MMobCore
+    public class MMobCore
     {
         public MMobName Name;
         public sbyte Clan; // The clan the mob belongs to.
@@ -86,7 +93,10 @@ namespace WYD2.Common.GameStructure
 
         public byte SaveMana; // TODO: unknown type!
 
-        public unsafe fixed byte SkillBar[4]; // The skills saved on the first 4 slots of the skill bar.
+        public byte Skillbar;
+        public byte Skillbar1;
+        public byte Skillbar2;
+        public byte Skillbar3;
 
         public byte GuildMemberType; // The mob's guuld level, used to define if it's a guild member or leader.
 
