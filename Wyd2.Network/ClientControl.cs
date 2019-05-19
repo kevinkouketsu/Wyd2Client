@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using WYD2.Common.GameStructure;
 using WYD2.Common.IncomingPacketStructure;
 using WYD2.Common.OutgoingPacketStructure;
 using WYD2.Common.Utility;
@@ -47,6 +49,16 @@ namespace WYD2.Network
         public void CreateCharacter(string name, int slotId, int classId)
         {
             Connection.Send(W2Marshal.GetBytes(MCreateCharacterPacket.Create(name, slotId, classId)));
+        }
+
+        public void DeleteCharacter(string name, int slotId, string password)
+        {
+            Connection.Send(W2Marshal.GetBytes(MDeleteCharacterPacket.Create(slotId, name, password)));
+        }
+
+        public void CharLogout()
+        {
+            Connection.Send(W2Marshal.GetBytes(new MPacketHeader() { Opcode = 0x215, Size = (ushort)Marshal.SizeOf(typeof(MPacketHeader)) }));
         }
     }
 }

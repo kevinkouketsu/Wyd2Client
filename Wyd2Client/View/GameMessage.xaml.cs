@@ -10,21 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Wyd2.Client.ViewModel;
 
 namespace Wyd2.Client.View
 {
     /// <summary>
-    /// Interaction logic for CreateCharacterWindow.xaml
+    /// Interaction logic for GameMessage.xaml
     /// </summary>
-    public partial class CreateCharacterWindow : UserControl
+    public partial class GameMessage : UserControl
     {
-        public CreateCharacterWindow(CreateCharacterViewModel context)
+        public GameMessage(string message)
         {
             InitializeComponent();
 
-            DataContext = context;
+            DataContext = new GameMessageViewModel()
+            {
+                Message = message
+            };
         }
     }
 }

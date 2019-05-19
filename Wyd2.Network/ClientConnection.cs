@@ -15,10 +15,16 @@ namespace WYD2.Network
 {
     public class ClientConnection : TcpBase
     {
-        public event EventHandler<MLoginSuccessfulPacket> OnSucessfullLogin;
+        public event EventHandler<MLoginSuccessfulPacket> OnReceiveSucessfullLogin;
         public event EventHandler<ushort> OnReceiveUnknowPacket;
-        public event EventHandler<bool> OnTokenResponse;
-        public event EventHandler<MResendCharList> OnRefreshCharList;
+        public event EventHandler<bool> OnReceiveTokenResponse;
+        public event EventHandler<EventArgs> OnReceiveCreateCharacterError;
+        public event EventHandler<EventArgs> OnReceiveDeleteCharacterError;
+        public event EventHandler<MResendCharListPacket> OnReceiveRefreshCharList;
+        public event EventHandler<MCharToWorldPacket> OnReceiveCharToWorld;
+        public event EventHandler<string> OnReceiveGameMessage;
+        public event EventHandler<MCreateMobPacket> OnReceiveCreateMob;
+        public event EventHandler<EventArgs> OnReceiveCharLogoutSignal;
 
         public new event EventHandler<EventArgs> OnSuccessfullConnect
         {
@@ -38,14 +44,33 @@ namespace WYD2.Network
             switch (packetId)
             {
                 case MLoginSuccessfulPacket.Opcode:
-                    OnSucessfullLogin?.Invoke(this, W2Marshal.GetStructure<MLoginSuccessfulPacket>(buffer));
+                    OnReceiveSucessfullLogin?.Invoke(this, W2Marshal.GetStructure<MLoginSuccessfulPacket>(buffer));
                     break;
                 case MTokenPacket.Opcode:
                 case MTokenPacket.Opcode_Incorrect:
-                    OnTokenResponse?.Invoke(this, packetId == MTokenPacket.Opcode);
+                    OnReceiveTokenResponse?.Invoke(this, packetId == MTokenPacket.Opcode);
                     break;
-                case MResendCharList.Opcode:
-                    OnRefreshCharList?.Invoke(this, W2Marshal.GetStructure<MResendCharList>(buffer));
+                case MResendCharListPacket.Opcode:
+                case MResendCharListPacket.Opcode_DeleteCharcter:
+                    OnReceiveRefreshCharList?.Invoke(this, W2Marshal.GetStructure<MResendCharListPacket>(buffer));
+                    break;
+                case 0x11A:
+                    OnReceiveCreateCharacterError?.Invoke(this, EventArgs.Empty);
+                    break;
+                case 0x11B:
+                    OnReceiveDeleteCharacterError?.Invoke(this, EventArgs.Empty);
+                    break;
+                case MCharToWorldPacket.Opcode:
+                    OnReceiveCharToWorld?.Invoke(this, W2Marshal.GetStructure<MCharToWorldPacket>(buffer));
+                    break;
+                case MTextMessagePacket.Opcode:
+                    OnReceiveGameMessage?.Invoke(this, W2Marshal.GetStructure<MTextMessagePacket>(buffer).Message);
+                    break;
+                case MCreateMobPacket.Opcode:
+                    OnReceiveCreateMob?.Invoke(this, W2Marshal.GetStructure<MCreateMobPacket>(buffer));
+                    break;
+                case 0x116:
+                    OnReceiveCharLogoutSignal?.Invoke(this, EventArgs.Empty);
                     break;
                 default:
                     OnReceiveUnknowPacket?.Invoke(this, (ushort)packetId);

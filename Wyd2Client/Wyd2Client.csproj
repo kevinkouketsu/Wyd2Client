@@ -66,6 +66,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\DeleteCharacterWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GameMessage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -74,15 +82,25 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AsyncObservableCollection.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
+    <Compile Include="Model\GameMessageModel.cs" />
     <Compile Include="Model\PlayerModel.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="ViewModel\Base\BaseCommand.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
     <Compile Include="ViewModel\CreateCharacterViewModel.cs" />
+    <Compile Include="ViewModel\DeleteCharacterViewModel.cs" />
+    <Compile Include="ViewModel\GameMessageViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="View\CreateCharacterWindow.xaml.cs">
       <DependentUpon>CreateCharacterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\DeleteCharacterWindow.xaml.cs">
+      <DependentUpon>DeleteCharacterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GameMessage.xaml.cs">
+      <DependentUpon>GameMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

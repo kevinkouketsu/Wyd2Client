@@ -64,7 +64,7 @@ namespace WYD2.Network
 
         public void Send(byte[] data)
         {
-            if (data.Length > 12)
+            if (data.Length >= 12)
                 PacketSecurity.Encrypt(data);
 
             // Begin sending the data to the remote device.  
@@ -99,20 +99,7 @@ namespace WYD2.Network
 
             InitCodeEvent.WaitOne(3000);
 
-            _recvThread = new Thread(() =>
-            {
-
-                try
-                {
-                    StartReceive(State);
-                }
-                catch (ThreadAbortException)
-                {
-
-                }
-            });
-
-            _recvThread.Start();
+            StartReceive(State);
         }
 
         private void StartReceive(TCP_StateConnection state)
@@ -127,12 +114,12 @@ namespace WYD2.Network
             try
             {
                 Socket handler = State.workSocket;
-
                 int read = handler.EndReceive(ar);
-                var packetBuffer = new CCompoundBuffer(read)
-                {
-                    RawBuffer = State.recvBuffer
-                };
+
+                var packetBuffer = new CCompoundBuffer(State.recvBuffer);
+
+                if (read < 0)
+                    return;
 
                 lock (_locker)
                 {
@@ -142,6 +129,9 @@ namespace WYD2.Network
 
                         int size = packetBuffer.ReadNextShort(0);
                         int packetId = packetBuffer.ReadNextShort(4);
+
+                        if (size < 12)
+                            break;
 
                         byte[] buffer = new byte[size];
                         fixed (byte* pBuffer = &packetBuffer.RawBuffer[packetBuffer.Offset])

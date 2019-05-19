@@ -16,14 +16,18 @@ namespace Wyd2.Client.Model
         Play = 22
     }
 
-    public class PlayerModel
+    public class MainWindowModel
     {
         public int ClientId { get; set; }
         public TPlayerState State { get; set; }
 
         public MMobCore Mob { get; set; }
 
-        public PlayerModel()
+        public MMobName SelectedCharlistCharacter { get; set; }
+
+        public bool IsSelCharExpanded { get; set; }
+
+        public MainWindowModel()
         {
             Mob = new MMobCore();
         }
