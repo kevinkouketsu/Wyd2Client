@@ -25,6 +25,8 @@ namespace WYD2.Network
         public event EventHandler<string> OnReceiveGameMessage;
         public event EventHandler<MCreateMobPacket> OnReceiveCreateMob;
         public event EventHandler<EventArgs> OnReceiveCharLogoutSignal;
+        public event EventHandler<MChatMessagePacket> OnReceiveChatMessage;
+        public event EventHandler<MSignalValuePacket> OnReceiveDeleteMob;
 
         public new event EventHandler<EventArgs> OnSuccessfullConnect
         {
@@ -63,14 +65,20 @@ namespace WYD2.Network
                 case MCharToWorldPacket.Opcode:
                     OnReceiveCharToWorld?.Invoke(this, W2Marshal.GetStructure<MCharToWorldPacket>(buffer));
                     break;
-                case MTextMessagePacket.Opcode:
-                    OnReceiveGameMessage?.Invoke(this, W2Marshal.GetStructure<MTextMessagePacket>(buffer).Message);
+                case MClientMessageTextPacket.Opcode:
+                    OnReceiveGameMessage?.Invoke(this, W2Marshal.GetStructure<MClientMessageTextPacket>(buffer).Message);
                     break;
                 case MCreateMobPacket.Opcode:
                     OnReceiveCreateMob?.Invoke(this, W2Marshal.GetStructure<MCreateMobPacket>(buffer));
                     break;
                 case 0x116:
                     OnReceiveCharLogoutSignal?.Invoke(this, EventArgs.Empty);
+                    break;
+                case 0x165:
+                    OnReceiveDeleteMob?.Invoke(this, W2Marshal.GetStructure<MSignalValuePacket>(buffer));
+                    break;
+                case MChatMessagePacket.Opcode:
+                    OnReceiveChatMessage?.Invoke(this, W2Marshal.GetStructure<MChatMessagePacket>(buffer));
                     break;
                 default:
                     OnReceiveUnknowPacket?.Invoke(this, (ushort)packetId);

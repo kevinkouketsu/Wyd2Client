@@ -83,8 +83,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AsyncObservableCollection.cs" />
+    <Compile Include="Extension.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
     <Compile Include="Model\GameMessageModel.cs" />
+    <Compile Include="Model\MobModel.cs" />
     <Compile Include="Model\PlayerModel.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="ViewModel\Base\BaseCommand.cs" />

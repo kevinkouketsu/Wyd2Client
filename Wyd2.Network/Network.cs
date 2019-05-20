@@ -28,7 +28,6 @@ namespace WYD2.Network
     {
         public object _locker = new object();
         protected event EventHandler<EventArgs> OnSuccessfullConnect;
-        public event EventHandler<MPacketHeader> OnSendPacket;
 
         protected abstract void InterpretPacket(int packetId, byte[] buffer);
 

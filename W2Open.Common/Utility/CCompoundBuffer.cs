@@ -40,6 +40,11 @@
             Offset = initialOffset;
         }
 
+        public CCompoundBuffer(byte[] rawBuffer)
+        {
+            RawBuffer = rawBuffer;
+        }
+
         public unsafe short ReadNextShort(int adtOffset = 0)
         {
             fixed(byte* b = RawBuffer)

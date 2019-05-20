@@ -20,18 +20,7 @@ namespace Wyd2.Client.ViewModel
 {
     public class PlayerViewModel : BaseViewModel
     {
-        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
-
-        private ClientConnection Network { get; }
-        private ClientControl Client { get; set; }
-
-        private MainWindowModel Player { get; }
-        private MSelChar _selChar;
-
-        private int SelectedCharacterIndex
-        {
-            get => SelChar.Names.IndexOf(SelChar.Names.First(x => x.Name == SelectedCharlistCharacter.Name));
-        }
+        #region Public Properties
 
         public bool IsSelCharExpanded
         {
@@ -78,9 +67,56 @@ namespace Wyd2.Client.ViewModel
             }
         }
 
+        public string AccountName
+        {
+            get => Player.Mob.Name.Value;
+            set
+            {
+                Player.Mob.Name = new MMobName(value);
+
+                OnPropertyChanged();
+            }
+        }
+
+        public IList<MMobName> CharName
+        {
+            get
+            {
+                if (SelChar.Names == null)
+                    return null;
+
+                return SelChar.Names.ToList();
+            }
+        }
+
+        public ObservableCollection<ushort> UnknowPackets { get; set; } = new AsyncObservableCollection<ushort>();
+        public ObservableCollection<TMessage> Messages { get; set; } = new AsyncObservableCollection<TMessage>();
+        public ObservableCollection<MobModel> Mobs { get; set; } = new AsyncObservableCollection<MobModel>();
+
         public ICommand CreateCharacterCommand { get; }
         public ICommand DeleteCharacterCommand { get; }
         public ICommand EnterCharacterCommand { get; }
+
+        #endregion
+
+        #region Private Properties
+
+        private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
+
+        private ClientConnection Network { get; }
+        private ClientControl Client { get; set; }
+
+        private MainWindowModel Player { get; }
+        private MSelChar _selChar;
+
+        private int SelectedCharacterIndex
+        {
+            get => SelChar.Names.IndexOf(SelChar.Names.First(x => x.Name == SelectedCharlistCharacter.Name));
+        }
+
+        #endregion
+
+        #region Constructor
 
         public PlayerViewModel()
         {
@@ -105,10 +141,15 @@ namespace Wyd2.Client.ViewModel
             Network.OnReceiveCharToWorld += this.Network_OnReceiveCharToWorld;
             Network.OnReceiveGameMessage += this.Network_OnReceiveGameMessage;
             Network.OnReceiveCreateMob += this.Network_OnReceiveCreateMob;
+            Network.OnReceiveChatMessage += this.Network_OnReceiveChatMessage;
+            Network.OnReceiveDeleteMob += this.Network_OnReceiveDeleteMob;
+
             Network.OnReceiveCharLogoutSignal += (sender, args) => State = TPlayerState.Token;
 
             Network.Connect();
         }
+
+        #endregion
 
         #region Commands 
 
@@ -208,14 +249,17 @@ namespace Wyd2.Client.ViewModel
             }, e);
 
             SelChar = e.SelChar;
-            Messages.Add("A tela de seleção de personagens foi atualizada");
+            Messages.Add(new TMessage("A tela de seleção de personagens foi atualizada", TMessage.SystemColor));
 
             IsSelCharExpanded = true;
         }
 
         private void Network_OnTokenResponse(object sender, bool e)
         {
-            Messages.Add(e ? "Senha numérica correta" : "Senha numérica incorreta");
+            _synchronizationContext.Send((a) =>
+            {
+                Messages.Add(new TMessage(e ? "Senha numérica correta" : "Senha numérica incorreta", TMessage.SystemColor));
+            }, e);
 
             if (e)
                 Player.State = TPlayerState.Token;
@@ -266,38 +310,43 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveCreateMob(object sender, MCreateMobPacket e)
         {
-            Console.WriteLine($"{ e.Name } apareceu na tela em { e.Position.X }x { e.Position.Y }y. TAB { e.Tab }");
-        }
+            if (Mobs.Count(x => x.Index == e.Index) > 0)
+                return;
 
-        #endregion
-
-        #region Public Properties
-
-        public string AccountName
-        {
-            get => Player.Mob.Name.Value;
-            set
+            _synchronizationContext.Send((a) =>
             {
-                Player.Mob.Name = new MMobName(value);
-
-                OnPropertyChanged();
-            }
+                Mobs.Add(new MobModel(e.Name, e.Index)
+                {
+                    Score = e.Score,
+                    Position = e.Position,
+                });
+            }, null);
         }
 
-        public IList<MMobName> CharName
+        private void Network_OnReceiveDeleteMob(object sender, MSignalValuePacket e)
         {
-            get
-            {
-                if (SelChar.Names == null)
-                    return null;
+            var mobs = Mobs.Where(x => x.Index == e.Header.ClientId);
+            if (mobs.Count() <= 0)
+                return;
 
-                return SelChar.Names.ToList();
-            }
+            _synchronizationContext.Send((a) =>
+            {
+                Mobs.Remove(mobs.First());
+            }, e);
         }
 
-        public ObservableCollection<ushort> UnknowPackets { get; set; } = new AsyncObservableCollection<ushort>();
-        public ObservableCollection<string> Messages { get; set; } = new AsyncObservableCollection<string>();
+        private void Network_OnReceiveChatMessage(object sender, MChatMessagePacket e)
+        {
+            _synchronizationContext.Send((a) =>
+            {
+                var mobs = Mobs.Where(x => x.Index == e.Header.ClientId);
+                if (mobs.Count() <= 0)
+                    return;
 
+                var mob = Mobs.First();
+                Messages.Add(new TMessage($"[{ mob.Name }]> { e.Message }", TMessage.NormalColor));
+            }, e);
+        }
         #endregion
     }
 }

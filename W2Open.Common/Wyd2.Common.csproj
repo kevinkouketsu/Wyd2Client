@@ -54,8 +54,10 @@
     <Compile Include="GameStructure\MScore.cs" />
     <Compile Include="GameStructure\MSelChar.cs" />
     <Compile Include="IncomingPacketStructure\MCharToWorldPacket.cs" />
+    <Compile Include="IncomingPacketStructure\MChatMessagePacket.cs" />
     <Compile Include="IncomingPacketStructure\MCreateMobPacket.cs" />
     <Compile Include="IncomingPacketStructure\MResendCharListPacket.cs" />
+    <Compile Include="IncomingPacketStructure\MSignalValuePacket.cs" />
     <Compile Include="OutgoingPacketStructure\MAccountLoginPacket.cs" />
     <Compile Include="OutgoingPacketStructure\MDeleteCharacterPacket.cs" />
     <Compile Include="OutgoingPacketStructure\MPingPacket.cs" />
@@ -63,7 +65,7 @@
     <Compile Include="OutgoingPacketStructure\MTokenPacket.cs" />
     <Compile Include="NetworkBasics.cs" />
     <Compile Include="IncomingPacketStructure\MLoginSuccessfulPacket.cs" />
-    <Compile Include="IncomingPacketStructure\MTextMessagePacket.cs" />
+    <Compile Include="IncomingPacketStructure\MClientMessageTextPacket.cs" />
     <Compile Include="OutgoingPacketStructure\MCreateCharacterPacket.cs" />
     <Compile Include="ProjectBasics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

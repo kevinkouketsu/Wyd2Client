@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using WYD2.Common.GameStructure;
 
 namespace Wyd2.Client.Model
@@ -14,6 +15,21 @@ namespace Wyd2.Client.Model
         SelChar = 11,
         Token = 12,
         Play = 22
+    }
+
+    public struct TMessage
+    {
+        public string Message { get; }
+        public SolidColorBrush Color { get; }
+
+        public TMessage(string message, SolidColorBrush color)
+        {
+            Color = color;
+            Message = message;
+        }
+
+        public static SolidColorBrush NormalColor = new SolidColorBrush(Colors.White);
+        public static SolidColorBrush SystemColor = new SolidColorBrush(Colors.BlueViolet);
     }
 
     public class MainWindowModel

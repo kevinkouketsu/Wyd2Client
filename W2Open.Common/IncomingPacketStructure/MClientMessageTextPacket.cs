@@ -9,7 +9,7 @@ namespace WYD2.Common.IncomingPacketStructure
     /// A text message which will be displayed in the client as a game notice.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MTextMessagePacket : IGamePacket
+    public struct MClientMessageTextPacket : IGamePacket
     {
         public const ushort Opcode = 0x101;
 
