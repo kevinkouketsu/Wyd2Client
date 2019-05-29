@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WYD2.Common.GameStructure;
 using WYD2.Common.IncomingPacketStructure;
-using WYD2.Common.OutgoingPacketStructure;
+using Outgoing = WYD2.Common.OutgoingPacketStructure;
 using WYD2.Common.Utility;
 using WYD2.Network;
 
@@ -27,7 +27,7 @@ namespace WYD2.Network
         public event EventHandler<EventArgs> OnReceiveCharLogoutSignal;
         public event EventHandler<MChatMessagePacket> OnReceiveChatMessage;
         public event EventHandler<MSignalValuePacket> OnReceiveDeleteMob;
-
+        public event EventHandler<MMovePacket> OnReceiveMovement;
         public new event EventHandler<EventArgs> OnSuccessfullConnect
         {
             add { base.OnSuccessfullConnect += value; }
@@ -43,14 +43,18 @@ namespace WYD2.Network
         {
             Console.WriteLine($"PacketId 0x{ packetId.ToString("X") }");
 
+            var pHeader = W2Marshal.GetStructure<MPacketHeader>(buffer);
+
+            PacketSecurity.LastPacket = Environment.TickCount;
+            PacketSecurity.TimePacket = pHeader.TimeStamp;
             switch (packetId)
             {
                 case MLoginSuccessfulPacket.Opcode:
                     OnReceiveSucessfullLogin?.Invoke(this, W2Marshal.GetStructure<MLoginSuccessfulPacket>(buffer));
                     break;
-                case MTokenPacket.Opcode:
-                case MTokenPacket.Opcode_Incorrect:
-                    OnReceiveTokenResponse?.Invoke(this, packetId == MTokenPacket.Opcode);
+                case Outgoing.MTokenPacket.Opcode:
+                case Outgoing.MTokenPacket.Opcode_Incorrect:
+                    OnReceiveTokenResponse?.Invoke(this, packetId == Outgoing.MTokenPacket.Opcode);
                     break;
                 case MResendCharListPacket.Opcode:
                 case MResendCharListPacket.Opcode_DeleteCharcter:
@@ -79,6 +83,9 @@ namespace WYD2.Network
                     break;
                 case MChatMessagePacket.Opcode:
                     OnReceiveChatMessage?.Invoke(this, W2Marshal.GetStructure<MChatMessagePacket>(buffer));
+                    break;
+                case MMovePacket.Opcode:
+                    OnReceiveMovement?.Invoke(this, W2Marshal.GetStructure<MMovePacket>(buffer));
                     break;
                 default:
                     OnReceiveUnknowPacket?.Invoke(this, (ushort)packetId);

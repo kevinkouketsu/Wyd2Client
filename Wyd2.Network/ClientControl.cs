@@ -28,8 +28,7 @@ namespace WYD2.Network
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException("Password cannot be null");
 
-            var packet = MAccountLoginPacket.Create(userName, password, version);
-
+            var packet = new MAccountLoginPacket(userName, password, version);
             Connection.Send(W2Marshal.GetBytes(packet));
         }
 
@@ -38,27 +37,27 @@ namespace WYD2.Network
             if (string.IsNullOrWhiteSpace(password))
                 throw new ArgumentNullException("Password cannot be null");
 
-            Connection.Send(W2Marshal.GetBytes(MTokenPacket.Create(password, isChanging)));
+            Connection.Send(W2Marshal.GetBytes(new MTokenPacket(password, isChanging)));
         }
 
         public void EnterMob(int charIndex)
         {
-            Connection.Send(W2Marshal.GetBytes(MRequestMobLogin.Create(charIndex)));
+            Connection.Send(W2Marshal.GetBytes(new MRequestMobLogin(charIndex)));
         }
 
         public void CreateCharacter(string name, int slotId, int classId)
         {
-            Connection.Send(W2Marshal.GetBytes(MCreateCharacterPacket.Create(name, slotId, classId)));
+            Connection.Send(W2Marshal.GetBytes(new MCreateCharacterPacket(name, slotId, classId)));
         }
 
         public void DeleteCharacter(string name, int slotId, string password)
         {
-            Connection.Send(W2Marshal.GetBytes(MDeleteCharacterPacket.Create(slotId, name, password)));
+            Connection.Send(W2Marshal.GetBytes(new MDeleteCharacterPacket(slotId, name, password)));
         }
 
         public void CharLogout()
         {
-            Connection.Send(W2Marshal.GetBytes(new MPacketHeader() { Opcode = 0x215, Size = (ushort)Marshal.SizeOf(typeof(MPacketHeader)) }));
+            Connection.Send(W2Marshal.GetBytes(new MPacketSignal(0x215, 0)));
         }
     }
 }

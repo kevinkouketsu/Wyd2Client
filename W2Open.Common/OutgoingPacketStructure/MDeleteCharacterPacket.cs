@@ -9,11 +9,9 @@ using WYD2.Common.GameStructure;
 namespace WYD2.Common.OutgoingPacketStructure
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MDeleteCharacterPacket : IGamePacket
+    public class MDeleteCharacterPacket : ClientPacket<MDeleteCharacterPacket>
     {
         public const int Opcode = 0x211;
-
-        public MPacketHeader Header { get; set; }
 
         public int SlotIndex;
 
@@ -23,18 +21,11 @@ namespace WYD2.Common.OutgoingPacketStructure
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
         public string Password;
 
-        public static MDeleteCharacterPacket Create(int slotId, string name, string password) =>
-            new MDeleteCharacterPacket()
-            {
-                Header = new MPacketHeader()
-                {
-                    Opcode = Opcode,
-                    Size = (ushort)Marshal.SizeOf(typeof(MDeleteCharacterPacket))
-                },
-
-                Name = name,
-                Password = password,
-                SlotIndex = slotId
-            };
+        public MDeleteCharacterPacket(int slotId, string name, string password)
+            : base (Opcode, 0)
+        {
+            Name = name;
+            Password = password; SlotIndex = slotId;
+        }
     }
 }

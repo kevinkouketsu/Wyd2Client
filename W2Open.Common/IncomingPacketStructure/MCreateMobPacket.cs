@@ -36,7 +36,7 @@ namespace WYD2.Common.IncomingPacketStructure
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public ushort[] Items;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_AFFECT)]
         public MAffectCreateMobPacket[] Affect;
 
         public ushort GuildIndex;

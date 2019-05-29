@@ -12,8 +12,10 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Wyd2.Client.Model;
 using Wyd2.Client.View;
+using WYD2.Common;
 using WYD2.Common.GameStructure;
 using WYD2.Common.IncomingPacketStructure;
+using WYD2.Common.Utility;
 using WYD2.Network;
 
 namespace Wyd2.Client.ViewModel
@@ -55,7 +57,7 @@ namespace Wyd2.Client.ViewModel
                 OnPropertyChanged(nameof(CharName));
             }
         }
-
+        
         public TPlayerState State
         {
             get => Player.State;
@@ -122,9 +124,7 @@ namespace Wyd2.Client.ViewModel
         {
             Player = new MainWindowModel();
 
-            Network = new ClientConnection("192.168.15.12", 8281);
-
-            Console.WriteLine(Marshal.SizeOf(typeof(MCharToWorldPacket)));
+            Network = new ClientConnection("51.81.0.90", 8281);
 
             // Commands 
             CreateCharacterCommand = new RelayCommand(CreateCharacter, CanCreateCharacter);
@@ -143,10 +143,13 @@ namespace Wyd2.Client.ViewModel
             Network.OnReceiveCreateMob += this.Network_OnReceiveCreateMob;
             Network.OnReceiveChatMessage += this.Network_OnReceiveChatMessage;
             Network.OnReceiveDeleteMob += this.Network_OnReceiveDeleteMob;
-
+            Network.OnReceiveMovement += this.Network_OnReceiveMovement;
             Network.OnReceiveCharLogoutSignal += (sender, args) => State = TPlayerState.Token;
 
             Network.Connect();
+
+            Console.WriteLine(Marshal.SizeOf(typeof(MMobCore)));
+            Console.WriteLine(Marshal.SizeOf(typeof(MScore)));
         }
 
         #endregion
@@ -273,7 +276,7 @@ namespace Wyd2.Client.ViewModel
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
             Client = new ClientControl(Network);
-            Client.Login("zeus", "zeus", 1001);
+            Client.Login("shepher", "kevin123", 762);
         }
 
         private void Network_OnSucessfullLogin(object sender, MLoginSuccessfulPacket e)
@@ -281,7 +284,8 @@ namespace Wyd2.Client.ViewModel
             SelChar = e.SelChar;
             AccountName = e.AccName;
 
-            Client.SendToken("1234", 0);
+            PacketSecurity.HashTable = e.HashKeyTable;
+            Client.SendToken("1208", 0);
 
             Player.State = TPlayerState.SelChar;
             IsSelCharExpanded = true;
@@ -303,6 +307,7 @@ namespace Wyd2.Client.ViewModel
         private void Network_OnReceiveCharToWorld(object sender, MCharToWorldPacket e)
         {
             Player.Mob = e.Mob;
+            Player.ClientId = e.ClientIndex;
 
             State = TPlayerState.Play;
             IsSelCharExpanded = false;
@@ -310,6 +315,19 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveCreateMob(object sender, MCreateMobPacket e)
         {
+            if(e.Index == Player.ClientId)
+            {
+                Player.Position = e.Position;
+
+                for(int i = 0; i < GameBasics.MAXL_AFFECT; i++)
+                {
+                    Player.Affects[i].Type = e.Affect[i].Index;
+                    Player.Affects[i].Time = e.Affect[i].Time;
+                }
+
+                return;
+            }
+
             if (Mobs.Count(x => x.Index == e.Index) > 0)
                 return;
 
@@ -346,6 +364,19 @@ namespace Wyd2.Client.ViewModel
                 var mob = Mobs.First();
                 Messages.Add(new TMessage($"[{ mob.Name }]> { e.Message }", TMessage.NormalColor));
             }, e);
+        }
+
+        private void Network_OnReceiveMovement(object sender, MMovePacket e)
+        {
+            int index = e.Header.ClientId;
+
+            var mob = Mobs.ById(index);
+            if (mob == null)
+                return;
+
+            mob.Position = e.Destiny;
+
+            Messages.Add(new TMessage($"{ mob.Name } se moveu de { e.LastPosition.X }x { e.LastPosition.Y } para { e.Destiny.X }x { e.Destiny.Y }y", TMessage.SystemColor));
         }
         #endregion
     }

@@ -28,13 +28,14 @@ namespace WYD2.Common.IncomingPacketStructure
 
         public int NextMovement;
 
-        public unsafe fixed byte Unknow_1[108];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 116)]
+        public byte[] Unknow_1;
 
         public short SlotIndex;
         public short ClientIndex;
-        public short Evasion;
+        public int Evasion;
 
-        public unsafe fixed byte Skillbar2[16];
+        public unsafe fixed byte Skillbar2[16]; // 1062
 
         public unsafe fixed byte Unknow_3[42];
 
@@ -47,6 +48,6 @@ namespace WYD2.Common.IncomingPacketStructure
 
         public unsafe fixed byte Unknow_5[30];
         public unsafe fixed byte Unknow_6[20];
-        public unsafe fixed byte Unknow_7[278];
+        public unsafe fixed byte Unknow_7[276];
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using WYD2.Common;
 using WYD2.Common.GameStructure;
 
 namespace Wyd2.Client.Model
@@ -38,6 +39,9 @@ namespace Wyd2.Client.Model
         public TPlayerState State { get; set; }
 
         public MMobCore Mob { get; set; }
+        public MPosition Position { get; set; }
+
+        public MAffect[] Affects { get; set; } = new MAffect[GameBasics.MAXL_AFFECT];
 
         public MMobName SelectedCharlistCharacter { get; set; }
 

@@ -14,7 +14,8 @@ namespace WYD2.Common.IncomingPacketStructure
 
         public MPacketHeader Header { get; set; }
 
-        public unsafe fixed sbyte HashKeyTable[16];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] HashKeyTable;
         
         public int Offset_28; // TODO: unknown!
 

@@ -128,7 +128,6 @@
                 <Expander ExpandDirection="Down"
                           MinWidth="200"
                           IsExpanded="True">
-
                     <Expander.Header>
                         <TextBlock
                             Text="Chat"

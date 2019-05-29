@@ -10,19 +10,11 @@ namespace WYD2.Common.GameStructure
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
     public struct MSelChar
     {
-        public unsafe fixed short SPosX[GameBasics.MAXL_ACC_MOB];
-        public unsafe fixed short SPosY[GameBasics.MAXL_ACC_MOB];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
+        public short[] SPosX;
 
-        public IList<MMobName> Names
-        {
-            get
-            {
-                if (Name == null)
-                    return null;
-
-                return Name.ToList();
-            }
-        }
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
+        public short[] SPosY;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
         public MMobName[] Name;
@@ -36,7 +28,22 @@ namespace WYD2.Common.GameStructure
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
         public ushort[] Guild;
 
-        public unsafe fixed int Coin[GameBasics.MAXL_ACC_MOB];
-        public unsafe fixed long Exp[GameBasics.MAXL_ACC_MOB];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
+        public int[] Coin;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
+        public long[] Exp;
+
+        public IList<MMobName> Names
+        {
+            get
+            {
+                if (Name == null)
+                    return null;
+
+                return Name.ToList();
+            }
+        }
+
     }
 }

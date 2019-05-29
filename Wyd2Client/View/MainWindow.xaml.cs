@@ -28,6 +28,5 @@ namespace Wyd2.Client.View
 
             DataContext = new PlayerViewModel();
         }
-
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using WYD2.Common.GameStructure;
+using WYD2.Common.Utility;
 
 namespace WYD2.Common.OutgoingPacketStructure
 {
@@ -8,11 +9,9 @@ namespace WYD2.Common.OutgoingPacketStructure
     /// Packet sent by game client requesting login.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MAccountLoginPacket : IGamePacket
+    public class MAccountLoginPacket : ClientPacket<MAccountLoginPacket>
     {
         public const ushort Opcode = 0x20D;
-
-        public MPacketHeader Header { get; set; }
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
         public String Password;
@@ -20,28 +19,23 @@ namespace WYD2.Common.OutgoingPacketStructure
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public String AccName;
 
-        // 
-        public unsafe fixed byte Zero[52];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 52)]
+        public Byte[] Zero;
 
         public int ClientVersion;
         public int DBNeedSave;
 
-        public unsafe fixed int AdapterName[4];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public Byte[] AdapterName;
 
-        public static MAccountLoginPacket Create(string accountId, string password, int clientVersion)
+        public MAccountLoginPacket(string accountId, string password, int clientVersion)
+            : base(Opcode, 0)
         {
-            MAccountLoginPacket packet = new MAccountLoginPacket();
-            packet.Header = new MPacketHeader
-            {
-                Opcode = Opcode,
-                Size = (ushort)Marshal.SizeOf(typeof(MAccountLoginPacket)),
-            };
+            AccName = accountId;
+            ClientVersion = clientVersion;
+            Password = password;
 
-            packet.AccName = accountId;
-            packet.ClientVersion = clientVersion;
-            packet.Password = password;
-
-            return packet;
+            DBNeedSave = 1;
         }
     }
 }

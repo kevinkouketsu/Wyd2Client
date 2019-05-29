@@ -5,15 +5,14 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using WYD2.Common.GameStructure;
+using WYD2.Common.Utility;
 
 namespace WYD2.Common.OutgoingPacketStructure
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MCreateCharacterPacket : IGamePacket
+    public class MCreateCharacterPacket : ClientPacket<MCreateCharacterPacket>
     {
         public const int Opcode = 0x20F;
-
-        public MPacketHeader Header { get; set; }
 
         public int SlotId;
 
@@ -22,17 +21,12 @@ namespace WYD2.Common.OutgoingPacketStructure
 
         public int ClassId;
 
-        public static MCreateCharacterPacket Create(string name, int slotId, int classId) =>
-           new MCreateCharacterPacket()
-           {
-               Header = new MPacketHeader()
-               {
-                   Opcode = Opcode,
-                   Size = (ushort)Marshal.SizeOf(typeof(MCreateCharacterPacket))
-               },
-               ClassId = classId,
-               Name = name,
-               SlotId = slotId
-           };
+        public MCreateCharacterPacket(string name, int slotId, int classId)
+            : base(Opcode, 0)
+        {
+            ClassId = classId;
+            Name = name;
+            SlotId = slotId;
+        }
     }
 }

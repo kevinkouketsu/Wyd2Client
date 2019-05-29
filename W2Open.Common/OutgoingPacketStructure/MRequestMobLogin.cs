@@ -6,27 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using WYD2.Common;
 using WYD2.Common.GameStructure;
+using WYD2.Common.Utility;
 
 namespace WYD2.Common.OutgoingPacketStructure
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MRequestMobLogin : IGamePacket
+    public class MRequestMobLogin : ClientPacket<MRequestMobLogin>
     {
         public const ushort Opcode = 0x213;
-        public MPacketHeader Header { get; set; }
 
         public int CharIndex;
 
-        public unsafe fixed sbyte Unknow[18];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
+        public byte[] Unknow;
 
-        public static MRequestMobLogin Create(int charIndex) => new MRequestMobLogin()
+        public MRequestMobLogin (int charIndex)
+            : base(Opcode, 0)
         {
-            CharIndex = charIndex,
-            Header = new MPacketHeader()
-            {
-                Opcode = Opcode,
-                Size = (ushort)Marshal.SizeOf(typeof(MRequestMobLogin))
-            },
-        };
+            CharIndex = charIndex;
+        }
     }
 }

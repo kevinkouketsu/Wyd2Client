@@ -56,10 +56,13 @@
     <Compile Include="IncomingPacketStructure\MCharToWorldPacket.cs" />
     <Compile Include="IncomingPacketStructure\MChatMessagePacket.cs" />
     <Compile Include="IncomingPacketStructure\MCreateMobPacket.cs" />
+    <Compile Include="IncomingPacketStructure\MMovePacket.cs" />
     <Compile Include="IncomingPacketStructure\MResendCharListPacket.cs" />
     <Compile Include="IncomingPacketStructure\MSignalValuePacket.cs" />
     <Compile Include="OutgoingPacketStructure\MAccountLoginPacket.cs" />
     <Compile Include="OutgoingPacketStructure\MDeleteCharacterPacket.cs" />
+    <Compile Include="OutgoingPacketStructure\MMovePacket.cs" />
+    <Compile Include="OutgoingPacketStructure\MPacketSignal.cs" />
     <Compile Include="OutgoingPacketStructure\MPingPacket.cs" />
     <Compile Include="OutgoingPacketStructure\MRequestMobLogin.cs" />
     <Compile Include="OutgoingPacketStructure\MTokenPacket.cs" />

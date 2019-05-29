@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using WYD2.Common.Utility;
 
 namespace WYD2.Common.GameStructure
 {
@@ -8,6 +9,19 @@ namespace WYD2.Common.GameStructure
     public interface IGamePacket
     {
         MPacketHeader Header { get; set; }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    public abstract class ClientPacket<T>
+    {
+        public MPacketHeader Header;
+
+        public ClientPacket(ushort packetId, ushort clientId)
+        {
+            W2Marshal.BuildPacketHeader<T>(ref Header, clientId);
+
+            Header.Opcode = packetId;
+        }
     }
 
     /// <summary>
@@ -24,6 +38,6 @@ namespace WYD2.Common.GameStructure
         public ushort Opcode;
         public ushort ClientId;
 
-        public uint TimeStamp;
+        public int TimeStamp;
     }
 }

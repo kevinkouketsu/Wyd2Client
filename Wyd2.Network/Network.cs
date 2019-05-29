@@ -117,8 +117,10 @@ namespace WYD2.Network
 
                 var packetBuffer = new CCompoundBuffer(State.recvBuffer);
 
-                if (read < 0)
-                    return;
+                if (read == 0)
+                {
+                    throw new Exception("Disconnected");
+                }
 
                 lock (_locker)
                 {
