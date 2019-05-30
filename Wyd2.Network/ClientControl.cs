@@ -59,5 +59,12 @@ namespace WYD2.Network
         {
             Connection.Send(W2Marshal.GetBytes(new MPacketSignal(0x215, 0)));
         }
+
+        public void Movement(ushort clientId, MPosition Current, MPosition Destiny, uint moveType, uint Speed)
+        {
+            var movement = new Common.OutgoingPacketStructure.MMovePacket(clientId, Current, Destiny, moveType, Speed);
+
+            Connection.Send(W2Marshal.GetBytes(movement));
+        }
     }
 }

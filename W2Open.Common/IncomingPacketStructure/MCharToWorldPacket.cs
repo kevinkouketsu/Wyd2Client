@@ -32,7 +32,7 @@ namespace WYD2.Common.IncomingPacketStructure
         public byte[] Unknow_1;
 
         public short SlotIndex;
-        public short ClientIndex;
+        public ushort ClientIndex;
         public int Evasion;
 
         public unsafe fixed byte Skillbar2[16]; // 1062

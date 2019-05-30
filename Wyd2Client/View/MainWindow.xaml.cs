@@ -22,11 +22,20 @@ namespace Wyd2.Client.View
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Random rand = new Random();
         public MainWindow()
         {
             InitializeComponent();
 
             DataContext = new PlayerViewModel();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            int posX = rand.Next(1200, 2500);
+            int posY = rand.Next(1200, 2500);
+
+            MessageBox.Show($" { posX } { posY }");
         }
     }
 }

@@ -38,31 +38,14 @@ namespace WYD2.Common.GameStructure
     }
 
     /// <summary>
-    /// The mob's name.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MMobName
-    {
-        public const int MAXL_NAME = 16;
-
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAXL_NAME)]
-        public String Value;
-
-        public string Name { get => Value; }
-
-        public MMobName(string name)
-        {
-            Value = name;
-        }
-    }
-
-    /// <summary>
     /// The basic mob structure. Contains the first structure create to represent the mob in the game.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
     public class MMobCore
     {
-        public MMobName Name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
+        public string Name;
+
         public sbyte Clan; // The clan the mob belongs to.
         public byte Merchant; // The mob's merchant ID.
         public ushort Guild; // The ID of the guild the mob belongs to.

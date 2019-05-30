@@ -24,18 +24,7 @@ namespace Wyd2.Client.ViewModel
     {
         #region Public Properties
 
-        public bool IsSelCharExpanded
-        {
-            get => Player.IsSelCharExpanded;
-            set
-            {
-                Player.IsSelCharExpanded = value;
-
-                OnPropertyChanged();
-            }
-        }
-
-        public MMobName SelectedCharlistCharacter
+        public string SelectedCharlistCharacter
         {
             get => Player.SelectedCharlistCharacter;
             set
@@ -48,10 +37,10 @@ namespace Wyd2.Client.ViewModel
 
         public MSelChar SelChar
         {
-            get => _selChar;
+            get => Player.SelChar;
             set
             {
-                _selChar = value;
+                Player.SelChar = value;
 
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(CharName));
@@ -71,16 +60,41 @@ namespace Wyd2.Client.ViewModel
 
         public string AccountName
         {
-            get => Player.Mob.Name.Value;
+            get => Player.Mob.Name;
             set
             {
-                Player.Mob.Name = new MMobName(value);
+                Player.Mob.Name = value;
 
                 OnPropertyChanged();
             }
         }
 
-        public IList<MMobName> CharName
+        public MainWindowModel Player { get; }
+
+        public MMobCore Mob
+        {
+            get => Player.Mob;
+            set
+            {
+                Player.Mob = value;
+                FinalScore = value.FinalScore;
+
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+
+        public MPosition Position
+        {
+            get => Player.Position;
+            set
+            {
+                Player.Position = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        public IList<MobName> CharName
         {
             get
             {
@@ -91,6 +105,54 @@ namespace Wyd2.Client.ViewModel
             }
         }
 
+        #region Character information
+
+        public string Name
+        {
+            get => Player.Mob.Name;
+        }
+
+        public MScore FinalScore
+        {
+            get => Player.Mob.FinalScore;
+            set
+            {
+                Player.Mob.FinalScore = value;
+
+                OnPropertyChanged(nameof(Level));
+                OnPropertyChanged(nameof(MaxHp));
+                OnPropertyChanged(nameof(CurrentHp));
+            }
+        }
+
+        public int Level
+        {
+            get => Player.Mob.FinalScore.Level + 1;
+        }
+
+        public int MaxHp
+        {
+            get => Player.Mob.FinalScore.MaxHp;
+            set
+            {
+                Player.Mob.FinalScore.MaxHp = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        public int CurrentHp
+        {
+            get => Player.Mob.FinalScore.CurrHp;
+            set
+            {
+                Player.Mob.FinalScore.CurrHp = value;
+
+                OnPropertyChanged();
+            }
+        }
+
+        #endregion
         public ObservableCollection<ushort> UnknowPackets { get; set; } = new AsyncObservableCollection<ushort>();
         public ObservableCollection<TMessage> Messages { get; set; } = new AsyncObservableCollection<TMessage>();
         public ObservableCollection<MobModel> Mobs { get; set; } = new AsyncObservableCollection<MobModel>();
@@ -98,6 +160,7 @@ namespace Wyd2.Client.ViewModel
         public ICommand CreateCharacterCommand { get; }
         public ICommand DeleteCharacterCommand { get; }
         public ICommand EnterCharacterCommand { get; }
+        public ICommand MovementCommand { get; }
 
         #endregion
 
@@ -108,12 +171,9 @@ namespace Wyd2.Client.ViewModel
         private ClientConnection Network { get; }
         private ClientControl Client { get; set; }
 
-        private MainWindowModel Player { get; }
-        private MSelChar _selChar;
-
         private int SelectedCharacterIndex
         {
-            get => SelChar.Names.IndexOf(SelChar.Names.First(x => x.Name == SelectedCharlistCharacter.Name));
+            get => SelChar.Names.IndexOf(SelChar.Names.First(x => x.Name == SelectedCharlistCharacter));
         }
 
         #endregion
@@ -130,6 +190,7 @@ namespace Wyd2.Client.ViewModel
             CreateCharacterCommand = new RelayCommand(CreateCharacter, CanCreateCharacter);
             DeleteCharacterCommand = new RelayCommand(DeleteCharacter, CanDeleteCharacter);
             EnterCharacterCommand = new RelayCommand(EnterCharacter, CanEnterCharacter);
+            MovementCommand = new RelayCommand(Movement, CanMovement);
 
             Network.OnSuccessfullConnect += this.Network_OnSuccessfullConnect;
             Network.OnReceiveSucessfullLogin += this.Network_OnSucessfullLogin;
@@ -173,7 +234,7 @@ namespace Wyd2.Client.ViewModel
             if (State == TPlayerState.Empty || State == TPlayerState.Hello || State == TPlayerState.SelChar)
                 return false;
 
-            if (State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter.Name))
+            if (State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter))
                 return true;
 
             if (State == TPlayerState.Play)
@@ -224,13 +285,40 @@ namespace Wyd2.Client.ViewModel
                 if (index == -1)
                     return;
 
-                Client.DeleteCharacter(SelectedCharlistCharacter.Value, index, password);
+                Client.DeleteCharacter(SelectedCharlistCharacter, index, password);
             }
         }
 
         private bool CanDeleteCharacter()
         {
-            return Player.State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter.Value);
+            return Player.State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter);
+        }
+
+        private bool CanMovement(object arg)
+        {
+            return true;
+        }
+
+        private void Movement(object obj)
+        {
+            string cmd = obj as string;
+            if (cmd == null)
+                throw new Exception();
+
+            MPosition pos = Position;
+            if (cmd == "Up")
+                pos.Y++;
+            else if (cmd == "Down")
+                pos.Y--;
+            else if (cmd == "Right")
+                pos.X++;
+            else
+                pos.X--;
+
+            Client.Movement(Player.ClientId, Player.Position, pos, 0, Player.Mob.FinalScore.MovementSpeed);
+
+            Messages.Add(new TMessage($"Movimentado de {Player.Position } para { pos } ", TMessage.NormalColor));
+            Position = pos;
         }
 
         #endregion
@@ -253,8 +341,6 @@ namespace Wyd2.Client.ViewModel
 
             SelChar = e.SelChar;
             Messages.Add(new TMessage("A tela de seleção de personagens foi atualizada", TMessage.SystemColor));
-
-            IsSelCharExpanded = true;
         }
 
         private void Network_OnTokenResponse(object sender, bool e)
@@ -288,7 +374,6 @@ namespace Wyd2.Client.ViewModel
             Client.SendToken("1208", 0);
 
             Player.State = TPlayerState.SelChar;
-            IsSelCharExpanded = true;
         }
 
         private void Network_OnReceiveDeleteCharacterError(object sender, EventArgs e)
@@ -306,18 +391,18 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveCharToWorld(object sender, MCharToWorldPacket e)
         {
-            Player.Mob = e.Mob;
+            Mob = e.Mob;
             Player.ClientId = e.ClientIndex;
+            Position = e.Position;
 
             State = TPlayerState.Play;
-            IsSelCharExpanded = false;
         }
 
         private void Network_OnReceiveCreateMob(object sender, MCreateMobPacket e)
         {
             if(e.Index == Player.ClientId)
             {
-                Player.Position = e.Position;
+                Position = e.Position;
 
                 for(int i = 0; i < GameBasics.MAXL_AFFECT; i++)
                 {
@@ -369,14 +454,18 @@ namespace Wyd2.Client.ViewModel
         private void Network_OnReceiveMovement(object sender, MMovePacket e)
         {
             int index = e.Header.ClientId;
+            if(index == Player.ClientId)
+            {
+                Position = e.Destiny;
+
+                return;
+            }
 
             var mob = Mobs.ById(index);
             if (mob == null)
                 return;
 
             mob.Position = e.Destiny;
-
-            Messages.Add(new TMessage($"{ mob.Name } se moveu de { e.LastPosition.X }x { e.LastPosition.Y } para { e.Destiny.X }x { e.Destiny.Y }y", TMessage.SystemColor));
         }
         #endregion
     }

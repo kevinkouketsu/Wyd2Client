@@ -35,7 +35,9 @@ namespace Wyd2.Client.Model
 
     public class MainWindowModel
     {
-        public int ClientId { get; set; }
+        public MSelChar SelChar { get; set; }
+
+        public ushort ClientId { get; set; }
         public TPlayerState State { get; set; }
 
         public MMobCore Mob { get; set; }
@@ -43,7 +45,7 @@ namespace Wyd2.Client.Model
 
         public MAffect[] Affects { get; set; } = new MAffect[GameBasics.MAXL_AFFECT];
 
-        public MMobName SelectedCharlistCharacter { get; set; }
+        public string SelectedCharlistCharacter { get; set; }
 
         public bool IsSelCharExpanded { get; set; }
 

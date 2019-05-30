@@ -62,6 +62,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Component\MapViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CreateCharacterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -83,6 +87,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AsyncObservableCollection.cs" />
+    <Compile Include="Component\MapViewControl.xaml.cs">
+      <DependentUpon>MapViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Component\ZoomBorder.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
     <Compile Include="Model\GameMessageModel.cs" />
@@ -146,6 +154,11 @@
       <Name>Wyd2.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Res\HeightMap.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Res\HeightMap.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

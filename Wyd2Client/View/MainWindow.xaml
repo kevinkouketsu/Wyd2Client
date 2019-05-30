@@ -5,13 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wyd2.Client.View"
         xmlns:state="clr-namespace:Wyd2.Client.Model"
+        xmlns:component="clr-namespace:Wyd2.Client.Component"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="MainWindow" 
+        Title="WYD2Client - by shepher" 
         Height="450"
-        Width="600"
+        Width="800"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Up"
+            Command="{Binding MovementCommand}"
+            CommandParameter="Up"/>
+        <KeyBinding
+            Key="Down"
+            Command="{Binding MovementCommand}"
+            CommandParameter="Down"/>
+        <KeyBinding
+            Key="Right"
+            Command="{Binding MovementCommand}"
+            CommandParameter="Right"/>
+        <KeyBinding
+            Key="Left"
+            Command="{Binding MovementCommand}"
+            CommandParameter="Left" />
+
+    </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -35,35 +55,38 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal">
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                
                 <!-- Seleção de Personagem -->
-                <Expander ExpandDirection="Down"
-                          IsExpanded="{Binding IsSelCharExpanded}">
-
-                    <Expander.Header>
-                        <TextBlock
-                            Text="Charlist"
-                            FontSize="16"
-                            RenderTransformOrigin=".5,.5">
-                        </TextBlock>
-                    </Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Margin="8"
+                        Text="Charlist"
+                        FontSize="12"
+                        Opacity=".68"
+                        RenderTransformOrigin=".5,.5">
+                    </TextBlock>
                     <Border
                         BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                        ClipToBounds="True">
-
-                        <Grid >
+                        ClipToBounds="True"
+                        Grid.Row="1">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="120" />
                                 <RowDefinition Height="32" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
                             <ListView 
-                                MinWidth="200"
                                 ItemsSource="{Binding CharName}"
-                                SelectedItem="{Binding SelectedCharlistCharacter}"
-                                DisplayMemberPath="Name">
+                                SelectedItem="{Binding SelectedCharlistCharacter}">
                             </ListView>
                             <StackPanel
                                 Grid.Row="1"
@@ -109,7 +132,6 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Text" Value="Entrar"/>
-
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding State}" Value="{x:Static state:TPlayerState.Play}">
                                                         <Setter Property="Text" Value="Deslogar"/>
@@ -122,67 +144,113 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                </Expander>
+                </Grid>
 
                 <!-- Chat -->
-                <Expander ExpandDirection="Down"
-                          MinWidth="200"
-                          IsExpanded="True">
-                    <Expander.Header>
-                        <TextBlock
-                            Text="Chat"
-                            FontSize="16"
-                            RenderTransformOrigin=".5,.5">
-                        </TextBlock>
-                    </Expander.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="100"/>
-                            <RowDefinition Height="32"/>
-                        </Grid.RowDefinitions>
+                <Grid Grid.Column="1"
+                      Margin="0 4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition />
+                        <RowDefinition Height="32"/>
+                    </Grid.RowDefinitions>
 
-                        <ListView
-                            ItemsSource="{Binding Messages}"
-                            Grid.Row="0">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock
-                                            Foreground="{Binding Color}"
-                                            Text="{Binding Message}"
-                                            TextWrapping="Wrap"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                        <Button
-                            Grid.Row="1"
-                            Style="{StaticResource MaterialDesignRaisedButton}"
-                            VerticalAlignment="Bottom"
-                            HorizontalAlignment="Right"
-                            Height="23"
-                            Width="80"
-                            Command="{Binding EnterCharacterCommand}"
-                            Margin="0 0 10 10">
-                            <TextBlock FontSize="12" Text="Limpar">
-                            </TextBlock>
-                        </Button>
-                    </Grid>
-                </Expander>
-                <ListBox
-                    ItemsSource="{Binding Mobs}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <TextBlock>
-                                    <Run Text="{Binding Name, Mode=OneWay}"/>
-                                    <Run Text="{Binding Index, StringFormat=' - (Index: {0})', Mode=OneWay}"/>
-                                </TextBlock>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
+                    <TextBlock
+                        Margin="8"
+                        Text="Mensagens"
+                        FontSize="12"
+                        Opacity=".68"
+                        RenderTransformOrigin=".5,.5">
+                    </TextBlock>
+                    <ListView
+                        ItemsSource="{Binding Messages}"
+                        Grid.Row="1">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock
+                                        Foreground="{Binding Color}"
+                                        Text="{Binding Message}"
+                                        TextWrapping="Wrap"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button
+                        Grid.Row="2"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Height="23"
+                        Width="80"
+                        Command="{Binding EnterCharacterCommand}"
+                        Margin="0 0 10 10">
+                        <TextBlock 
+                            FontSize="12" Text="Limpar">
+                        </TextBlock>
+                    </Button>
+                </Grid>
+
+                <!-- Informações do personagem -->
+                <Grid Grid.Column="2" Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="75"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Nome:" FontWeight="Bold"/>
+                        <TextBlock Text="Level:" FontWeight="Bold"/>
+                        <TextBlock Text="HP:" FontWeight="Bold"/>
+                        <TextBlock Text="Posição:" FontWeight="Bold"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                        <TextBlock Text="{Binding Level, Mode=OneWay}"/>
+                        <TextBlock>
+                            <Run Text="{Binding MaxHp}"/>
+                            <Run Text=" / "/>
+                            <Run Text="{Binding CurrentHp}"/>
+                        </TextBlock>
+                        <TextBlock Text="{Binding Position, Mode=OneWay}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <!-- Chat -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Margin="8"
+                        Text="Visão"
+                        FontSize="12"
+                        Opacity=".68"
+                        RenderTransformOrigin=".5,.5">
+                    </TextBlock>
+                    <ListBox
+                        Grid.Row="1"
+                        ItemsSource="{Binding Mobs}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock>
+                                        <Run Text="{Binding Name, Mode=OneWay}"/>
+                                        <Run Text="{Binding Index, StringFormat=' - (Index: {0})', Mode=OneWay}"/>
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Grid>
         </Grid>
     </materialDesign:DialogHost>
 </Window>

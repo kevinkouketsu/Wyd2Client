@@ -10,5 +10,10 @@ namespace WYD2.Common.GameStructure
     {
         public short X;
         public short Y;
+
+        public override string ToString()
+        {
+            return $"{ X }x { Y }y";
+        }
     }
 }

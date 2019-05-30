@@ -4,6 +4,18 @@ using System.Runtime.InteropServices;
 
 namespace WYD2.Common.GameStructure
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Ansi)]
+    public struct MobName
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
+        public string Name;
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
     /// <summary>
     /// Contains data representing the character selection scene. Used in some game packets.
     /// </summary>
@@ -17,7 +29,7 @@ namespace WYD2.Common.GameStructure
         public short[] SPosY;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
-        public MMobName[] Name;
+        public MobName[] Name;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
         public MScore[] Score;
@@ -34,7 +46,7 @@ namespace WYD2.Common.GameStructure
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
         public long[] Exp;
 
-        public IList<MMobName> Names
+        public IList<MobName> Names
         {
             get
             {
