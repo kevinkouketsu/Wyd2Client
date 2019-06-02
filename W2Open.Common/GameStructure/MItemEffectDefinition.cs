@@ -1,0 +1,143 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace WYD2.Common.GameStructure
+{
+    public static class MItemDefinition
+    {
+        public const Byte NONE = 0;              //
+        public const Byte LEVEL = 1;             // Level necessário
+        public const Byte DAMAGE = 2;           // Aumento de Dano
+        public const Byte AC1 = 3;               // Defesa
+        public const Byte HP = 4;                // Almento de HP máximo
+        public const Byte MP = 5;                // Almento de MP máximo
+                                                 //public const Byte NULL006 = 6;           // --
+        public const Byte STR = 7;               // Força
+        public const Byte INT = 8;               // Inteligência
+        public const Byte DEX = 9;               // Destreza
+        public const Byte CON = 10;              // Constituição
+        public const Byte SPECIAL1 = 11;         // Aprender Arma
+        public const Byte SPECIAL2 = 12;         // Confiança/Magia Branca/Elemental/Sobrevivência
+        public const Byte SPECIAL3 = 13;         // Trans/Magia Negra/Evocação/Troca
+        public const Byte SPECIAL4 = 14;         // Espada Mágica/Magica Especial/Natureza/Captura
+        public const Byte POS = 17;
+                                                 //public const Byte NULL015 = 15;          // --
+                                                 //public const Byte NULL016 = 16;          // --
+                                                 //public const Byte NULL017 = 17;          // --
+        public const Byte CLASS = 18;            // Classe
+                                                 //public const Byte NULL019 = 19;          // --
+                                                 //public const Byte NULL020 = 20;          // --
+        public const Byte WTYPE = 21;            // --
+        public const Byte REQ_STR = 22;          // Força necessário
+        public const Byte REQ_INT = 23;          // Inteligência necessário
+        public const Byte REQ_DEX = 24;          // Destreza necessário
+        public const Byte REQ_CON = 25;          // Constituição necessário
+        public const Byte ATTSPEED = 26;         // Aumento da Velocidade de Ataque
+        public const Byte RANGE = 27;            // <Distância que ataque pode ser dado>
+                                                 //public const Byte NULL028 = 28;          // --
+        public const Byte RUNSPEED = 29;         // Aumento da Velocidade de Movimento
+                                                 //public const Byte NULL030 = 30;          // --
+                                                 //public const Byte NULL031 = 31;          // --
+                                                 //public const Byte NULL032 = 32;          // --
+        public const Byte GRID = 33;             // <Total de slots ocupados pelo item 754 ~ ->
+        public const Byte GROUND = 34;           // <Algo haver com a posição no terreno>
+                                                 //public const Byte NULL035 = 35;          // --
+        public const Byte HWORDCOIN = 36;        // <Algo haver com a quantidade de outro item no drop>
+        public const Byte LWORDCOIN = 37;        // <Algo haver com a quantidade de outro item no drop>
+        public const Byte VOLATILE = 38;         // <Algo haver com tipo de item consumível>
+        public const Byte KEYID = 39;            // <Algo haver com a interação com portões>
+        public const Byte EVASION = 40;          // Índice de Evasão
+                                                 //public const Byte NULL041 = 41;          // --
+        public const Byte CRITICAL = 42;         // Crítico
+        public const Byte SANC1 = 43;            // <Refinação para itens>
+        public const Byte SAVEMANA = 44;         // Economia de Mana
+        public const Byte HPADD = 45;           // Índice de aumento de HP máximo (Apenas na Itemlist)
+        public const Byte MPADD = 46;           // Índice de aumento de MP máximo (Apenas na Itemlist)
+        public const Byte REGENHP = 47;          // Índice de regeneração de HP
+        public const Byte REGENMP = 48;          // Índice de regeneração de MP
+        public const Byte RESIST1 = 49;          // Resistência a Fogo
+        public const Byte RESIST2 = 50;          // Resistência a Gelo
+        public const Byte RESIST3 = 51;          // Resistência a Sagrado
+        public const Byte RESIST4 = 52;          // Resistência a Relâmpago
+        public const Byte ACADD = 53;              // Defesa
+        public const Byte RESISTALL = 54;        // Aumento de Imunidades
+        public const Byte BONUS = 55;            // <O QUE É?> --
+        public const Byte PVPDAMAGE = 56;        // Ataque PvP
+        public const Byte PVPAC = 57;            // Defesa PvP
+        public const Byte QUEST = 58;            // <Algo haver com a conclusão de quests>
+                                                 //public const Byte NULL059 = 59;          // --
+        public const Byte MAGIC = 60;           // Ataque Mágico
+        public const Byte AMOUNT = 61;           // <Quantidade de item>
+        public const Byte UNIQUEINDEX = 62;      // Número de índice exclusivo
+                                                 //public const Byte NULL063 = 63;          // --
+        public const Byte INIT1 = 64;            // Reiniciar Confiança/Magia Branca/Elemental/Sobrevivência 
+        public const Byte INIT2 = 65;            // Reiniciar Trans/Magia Negra/Evocação/Troca
+        public const Byte INIT3 = 66;            // Reiniciar Espada Mágica/Magica Especial/Natureza/Captura
+        public const Byte DAMAGEADD = 67;
+                                                 //public const Byte NULL067 = 67;          // --
+        public const Byte MAGICADD = 68;           // Ataque Mágico
+        public const Byte HPADD2 = 69;            // Índice de aumento de HP máximo
+        public const Byte MPADD2 = 70;            // Índice de aumento de MP máximo
+        public const Byte CRITICAL2 = 71;
+        public const Byte ACADD2 = 72;
+                                                 //public const Byte NULL071 = 71;          // --
+                                                 //public const Byte NULL072 = 72;          // --
+        public const Byte DAMAGE2 = 73;          // Aumento de Dano
+        public const Byte SPECIALALL = 74;       // Aumento de Aprendizagem de Skill
+                                                 //public const Byte NULL075 = 75;          // --
+                                                 //public const Byte NULL076 = 76;          // --
+                                                 //public const Byte NULL077 = 77;          // --
+        public const Byte INCUBATE = 78;         // Valor Crítico de Incubação
+        public const Byte MOUNTLIFE = 79;        // Vitalidade
+        public const Byte MOUNTHP = 80;          // HP
+        public const Byte MOUNTSANC = 81;        // Crecimento
+        public const Byte MOUNTFEED = 82;        // Ração
+        public const Byte MOUNTKILL = 83;        // EX
+        public const Byte INCUDELAY = 84;        // Tempo de Espera de Incubação
+                                                 //public const Byte NULL085 = 85;          // --
+                                                 //public const Byte NULL086 = 86;          // --
+        public const Byte ITEMTYPE = 87;         // <[A] [B] [C] [D] [E] [F] ...>
+        public const Byte NULL088 = 88;          // <O QUE É?> --
+                                                 //public const Byte NULL089 = 89;          // --
+                                                 //public const Byte NULL090 = 90;          // --
+                                                 //public const Byte NULL091 = 91;          // --
+                                                 //public const Byte NULL092 = 92;          // --
+                                                 //public const Byte NULL093 = 93;          // --
+                                                 //public const Byte NULL094 = 94;          // --
+                                                 //public const Byte NULL095 = 95;          // --
+                                                 //public const Byte NULL096 = 96;          // --
+                                                 //public const Byte NULL097 = 97;          // --
+                                                 //public const Byte NULL098 = 98;          // --
+                                                 //public const Byte NULL099 = 99;          // --
+                                                 //public const Byte NULL100 = 100;         // --
+                                                 //public const Byte NULL101 = 101;         // --
+                                                 //public const Byte NULL102 = 102;         // --
+                                                 //public const Byte NULL103 = 103;         // --
+                                                 //public const Byte NULL104 = 104;         // --
+                                                 //public const Byte NULL105 = 105;         // --
+        public const Byte CONTMES = 106;         // Mês (Taxa do Mês no Contador Amarelo)
+        public const Byte CONTHOR = 107;         // Horas(s) (Taxa do Hora no Contador Amarelo)
+        public const Byte CONTMIN = 108;         // Min(s) (Taxa do Minutos no Contador Amarelo)
+        public const Byte CONTANO = 109;         // Ano (Taxa do Ano no Contador Amarelo)
+        public const Byte CONTDIA = 110;         // Dia(s) (Taxa do Dia no Contador Amarelo)
+        public const Byte NULL111 = 111;         // <O QUE É?> --
+        public const Byte REQ_EVO = 112;         // <Evolução que pode usar o item [(0 = Todas as Evoluções) (1 = Archs ~ +) (2 = Apenas Mortais lvl 260 ~ +) (3 = Celestiais ~ +)]>
+        public const Byte NULL113 = 113;         // <O QUE É?> --
+                                                 //public const Byte NULL114 = 114;         // --
+        public const Byte SANC2 = 115;           // <Refinação para itens>
+        public const Byte BLUE = 116;            // <Tintura Azul para itens>
+        public const Byte RED = 117;             // <Tintura Vermelho para itens>
+        public const Byte GREEN = 118;           // <Tintura Verde para itens>
+        public const Byte SILVER = 119;          // <Tintura Prata para itens>
+        public const Byte BLACK = 120;           // <Tintura Preto para itens>
+        public const Byte PURPLE = 121;          // <Tintura Roxo para itens>
+        public const Byte BROWN = 122;           // <Tintura Marron para itens>
+        public const Byte DARKRED = 123;         // <Tintura Vermelho Escuro para itens>
+        public const Byte YELLOW = 124;          // <Tintura Amarelo para itens>
+        public const Byte DARKBLUE = 125;        // <Tintura Azul Escuro para itens>
+        public const Byte SANC3 = 126;           // <Refinação para itens>
+    }
+}

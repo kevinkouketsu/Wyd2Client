@@ -9,9 +9,9 @@ using WYD2.Common.GameStructure;
 using WYD2.Common.IncomingPacketStructure;
 using Outgoing = WYD2.Common.OutgoingPacketStructure;
 using WYD2.Common.Utility;
-using WYD2.Network;
+using WYD2.Control;
 
-namespace WYD2.Network
+namespace WYD2.Control
 {
     public class ClientConnection : TcpBase
     {
@@ -28,10 +28,23 @@ namespace WYD2.Network
         public event EventHandler<MChatMessagePacket> OnReceiveChatMessage;
         public event EventHandler<MSignalValuePacket> OnReceiveDeleteMob;
         public event EventHandler<MMovePacket> OnReceiveMovement;
+        public event EventHandler<MRefreshScorePacket> OnReceiveRefreshScore;
+        public event EventHandler<MIncorrectLoginPacket> OnReceiveIncorrectLogin;
+        public event EventHandler<MMobDeathPacket> OnReceiveMobDeath;
+        public event EventHandler<MSingleAttackPacket> OnReceiveSingleAttack;
+        public event EventHandler<MWhisperMessagePacket> OnReceiveWhisperMessage;
+        public event EventHandler<MGameMessageUnknowPacket> OnReceiveGameMessageUnknow;
+
         public new event EventHandler<EventArgs> OnSuccessfullConnect
         {
             add { base.OnSuccessfullConnect += value; }
             remove { base.OnSuccessfullConnect -= value; }
+        }
+
+        public new event EventHandler<EventArgs> OnDisconnect
+        {
+            add { base.OnDisconnect += value; }
+            remove { base.OnDisconnect -= value; }
         }
 
         public ClientConnection(string ipAddress, int port) 
@@ -41,8 +54,6 @@ namespace WYD2.Network
 
         protected override void InterpretPacket(int packetId, byte[] buffer)
         {
-            Console.WriteLine($"PacketId 0x{ packetId.ToString("X") }");
-
             var pHeader = W2Marshal.GetStructure<MPacketHeader>(buffer);
 
             PacketSecurity.LastPacket = Environment.TickCount;
@@ -86,6 +97,24 @@ namespace WYD2.Network
                     break;
                 case MMovePacket.Opcode:
                     OnReceiveMovement?.Invoke(this, W2Marshal.GetStructure<MMovePacket>(buffer));
+                    break;
+                case MRefreshScorePacket.Opcode:
+                    OnReceiveRefreshScore?.Invoke(this, W2Marshal.GetStructure<MRefreshScorePacket>(buffer));
+                    break;
+                case MIncorrectLoginPacket.Opcode:
+                    OnReceiveIncorrectLogin?.Invoke(this, W2Marshal.GetStructure<MIncorrectLoginPacket>(buffer));
+                    break;
+                case MMobDeathPacket.Opcode:
+                    OnReceiveMobDeath?.Invoke(this, W2Marshal.GetStructure<MMobDeathPacket>(buffer));
+                    break;
+                case MSingleAttackPacket.Opcode:
+                    OnReceiveSingleAttack?.Invoke(this, W2Marshal.GetStructure<MSingleAttackPacket>(buffer));
+                    break;
+                case MWhisperMessagePacket.Opcode:
+                    OnReceiveWhisperMessage?.Invoke(this, W2Marshal.GetStructure<MWhisperMessagePacket>(buffer));
+                    break;
+                case MGameMessageUnknowPacket.Opcode:
+                    OnReceiveGameMessageUnknow?.Invoke(this, W2Marshal.GetStructure<MGameMessageUnknowPacket>(buffer));
                     break;
                 default:
                     OnReceiveUnknowPacket?.Invoke(this, (ushort)packetId);

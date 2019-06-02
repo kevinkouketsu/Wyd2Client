@@ -29,6 +29,7 @@ namespace WYD2.Common.IncomingPacketStructure
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
         public string AccName;
 
-        public unsafe fixed sbyte Keys[12];
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] Keys;
     }
 }

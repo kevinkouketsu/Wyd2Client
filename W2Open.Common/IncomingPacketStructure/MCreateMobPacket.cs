@@ -9,7 +9,7 @@ using WYD2.Common.GameStructure;
 namespace WYD2.Common.IncomingPacketStructure
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MAffectCreateMobPacket
+    public struct MAffectPacket
     {
         public byte Index;
         public byte Time;
@@ -24,7 +24,7 @@ namespace WYD2.Common.IncomingPacketStructure
 
         public MPosition Position { get; set; }
 
-        public short Index;
+        public ushort Index;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
         public string Name;
@@ -37,7 +37,7 @@ namespace WYD2.Common.IncomingPacketStructure
         public ushort[] Items;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_AFFECT)]
-        public MAffectCreateMobPacket[] Affect;
+        public MAffectPacket[] Affect;
 
         public ushort GuildIndex;
 

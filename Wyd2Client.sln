@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wyd2Client", "Wyd2Client\Wyd2Client.csproj", "{421D7B38-C27F-4350-BD36-9FCC814178AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wyd2.Common", "W2Open.Common\Wyd2.Common.csproj", "{9E37305B-BADD-49E4-842A-FC45B8CE0B95}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wyd2.Network", "Wyd2.Network\Wyd2.Network.csproj", "{8C31F218-78BB-4C65-96AD-8D76B9878027}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wyd2.Control", "Wyd2.Network\Wyd2.Control.csproj", "{8C31F218-78BB-4C65-96AD-8D76B9878027}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

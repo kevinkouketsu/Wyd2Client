@@ -16,13 +16,16 @@ using WYD2.Common;
 using WYD2.Common.GameStructure;
 using WYD2.Common.IncomingPacketStructure;
 using WYD2.Common.Utility;
-using WYD2.Network;
+using WYD2.Control;
+using WYD2.Control.System;
 
 namespace Wyd2.Client.ViewModel
 {
     public class PlayerViewModel : BaseViewModel
     {
         #region Public Properties
+
+        public MPlayer Player { get; }
 
         public string SelectedCharlistCharacter
         {
@@ -43,10 +46,9 @@ namespace Wyd2.Client.ViewModel
                 Player.SelChar = value;
 
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(CharName));
             }
         }
-        
+
         public TPlayerState State
         {
             get => Player.State;
@@ -68,8 +70,6 @@ namespace Wyd2.Client.ViewModel
                 OnPropertyChanged();
             }
         }
-
-        public MainWindowModel Player { get; }
 
         public MMobCore Mob
         {
@@ -94,14 +94,31 @@ namespace Wyd2.Client.ViewModel
             }
         }
 
-        public IList<MobName> CharName
+        public bool IsPhysical
         {
-            get
+            get => Model.IsPhysical;
+            set
             {
-                if (SelChar.Names == null)
-                    return null;
+                Model.IsPhysical = value;
 
-                return SelChar.Names.ToList();
+                Macro = new PhysicalMacro(Player, Mobs);
+                Macro.OnAttackMob += (a, b) =>
+                {
+                    Client.SendPacket(b);
+                };
+
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsMagical
+        {
+            get => Model.IsMagical;
+            set
+            {
+                Model.IsMagical = value;
+
+                OnPropertyChanged();
             }
         }
 
@@ -152,16 +169,27 @@ namespace Wyd2.Client.ViewModel
             }
         }
 
+        public string Message
+        {
+            get => Model.Message;
+            set
+            {
+                Model.Message = value;
+
+                OnPropertyChanged();
+            }
+        }
+
         #endregion
         public ObservableCollection<ushort> UnknowPackets { get; set; } = new AsyncObservableCollection<ushort>();
         public ObservableCollection<TMessage> Messages { get; set; } = new AsyncObservableCollection<TMessage>();
-        public ObservableCollection<MobModel> Mobs { get; set; } = new AsyncObservableCollection<MobModel>();
+        public ObservableCollection<MMob> Mobs { get; set; } = new AsyncObservableCollection<MMob>();
 
-        public ICommand CreateCharacterCommand { get; }
-        public ICommand DeleteCharacterCommand { get; }
-        public ICommand EnterCharacterCommand { get; }
+        public MainWindowModel Model { get; } = new MainWindowModel();
+
         public ICommand MovementCommand { get; }
-
+        public ICommand SendMessageCommand { get; }
+        public ICommand EnterCommand { get; }
         #endregion
 
         #region Private Properties
@@ -171,28 +199,34 @@ namespace Wyd2.Client.ViewModel
         private ClientConnection Network { get; }
         private ClientControl Client { get; set; }
 
-        private int SelectedCharacterIndex
-        {
-            get => SelChar.Names.IndexOf(SelChar.Names.First(x => x.Name == SelectedCharlistCharacter));
-        }
+        private DispatcherTimer Timer { get; }
 
+        private MacroSystem Macro { get; set; }
         #endregion
 
         #region Constructor
 
         public PlayerViewModel()
         {
-            Player = new MainWindowModel();
+            Player = new MPlayer();
+
+            W2Objects.ItemList = ConfigReader.ReadItemList("ItemList.csv", "ItemEffect.h");
 
             Network = new ClientConnection("51.81.0.90", 8281);
+            Client = new ClientControl(Network);
+
+            Timer = new DispatcherTimer();
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 1500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
 
             // Commands 
-            CreateCharacterCommand = new RelayCommand(CreateCharacter, CanCreateCharacter);
-            DeleteCharacterCommand = new RelayCommand(DeleteCharacter, CanDeleteCharacter);
-            EnterCharacterCommand = new RelayCommand(EnterCharacter, CanEnterCharacter);
             MovementCommand = new RelayCommand(Movement, CanMovement);
 
+            SendMessageCommand = new RelayCommand(SendMessage, (b) => true);
+
             Network.OnSuccessfullConnect += this.Network_OnSuccessfullConnect;
+            Network.OnDisconnect += this.Network_OnDisconnect;
             Network.OnReceiveSucessfullLogin += this.Network_OnSucessfullLogin;
             Network.OnReceiveTokenResponse += this.Network_OnTokenResponse;
             Network.OnReceiveUnknowPacket += this.Network_OnReceiveUnknowPacket;
@@ -205,94 +239,39 @@ namespace Wyd2.Client.ViewModel
             Network.OnReceiveChatMessage += this.Network_OnReceiveChatMessage;
             Network.OnReceiveDeleteMob += this.Network_OnReceiveDeleteMob;
             Network.OnReceiveMovement += this.Network_OnReceiveMovement;
+            Network.OnReceiveIncorrectLogin += this.Network_OnReceiveIncorrectLogin;
+            Network.OnReceiveRefreshScore += this.Network_OnReceiveRefreshScore;
+            Network.OnReceiveMobDeath += this.Network_OnReceiveMobDeath;
+            Network.OnReceiveSingleAttack += this.Network_OnReceiveSingleAttack;
+            Network.OnReceiveWhisperMessage += this.Network_OnReceiveWhisperMessage;
+            Network.OnReceiveGameMessageUnknow += (a, packet) =>
+            {
+                Console.WriteLine($"Pacote 0x106 recebido... Type: { packet.Type.ToString("X") }. Código: { packet.Code.ToString("X") } ");
+            };
+
             Network.OnReceiveCharLogoutSignal += (sender, args) => State = TPlayerState.Token;
 
             Network.Connect();
-
-            Console.WriteLine(Marshal.SizeOf(typeof(MMobCore)));
-            Console.WriteLine(Marshal.SizeOf(typeof(MScore)));
         }
 
         #endregion
 
-        #region Commands 
+        #region Timer
 
-        private void EnterCharacter()
+        private void Timer_Tick(object sender, EventArgs e)
         {
-            if (State == TPlayerState.Token)
-            {
-                Client.EnterMob(SelectedCharacterIndex);
-
+            if (State != TPlayerState.Play)
                 return;
-            }
 
-            Client.CharLogout();
+            // Macro físico e mágico desabilitados
+            if (!IsPhysical && !IsMagical)
+                return;
+
+            Macro.DoMacro();
         }
 
-        private bool CanEnterCharacter()
-        {
-            if (State == TPlayerState.Empty || State == TPlayerState.Hello || State == TPlayerState.SelChar)
-                return false;
-
-            if (State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter))
-                return true;
-
-            if (State == TPlayerState.Play)
-                return true;
-
-            return false;
-        }
-
-        private async void CreateCharacter()
-        {
-            var context = new CreateCharacterViewModel();
-            var window = new CreateCharacterWindow(context);
-
-            context.CreateCommand = new RelayCommand(() =>
-            {
-                int index = SelChar.Names.IndexOf(SelChar.Names.First(x => string.IsNullOrWhiteSpace(x.Name)));
-
-                Client.CreateCharacter(context.Name, index, (int)context.Class);
-            }, () => true);
-
-            await DialogHost.Show(window, "RootDialog");
-        }
-
-        private bool CanCreateCharacter()
-        {
-            return Player.State == TPlayerState.Token && SelChar.Names.Count(x => string.IsNullOrWhiteSpace(x.Name)) > 0;
-        }
-
-        private async void DeleteCharacter()
-        {
-            DeleteCharacterViewModel context = new DeleteCharacterViewModel(DeleteCharacter);
-            DeleteCharacterWindow window = new DeleteCharacterWindow()
-            {
-                DataContext = context
-            };
-
-            await DialogHost.Show(window, "RootDialog");
-
-            void DeleteCharacter(object parameter)
-            {
-                var passwordContainer = parameter as IHavePassword;
-                if (passwordContainer == null)
-                    return;
-
-                var password = passwordContainer.Password;
-
-                int index = SelectedCharacterIndex;
-                if (index == -1)
-                    return;
-
-                Client.DeleteCharacter(SelectedCharlistCharacter, index, password);
-            }
-        }
-
-        private bool CanDeleteCharacter()
-        {
-            return Player.State == TPlayerState.Token && !string.IsNullOrWhiteSpace(SelectedCharlistCharacter);
-        }
+        #endregion
+        #region Commands 
 
         private bool CanMovement(object arg)
         {
@@ -316,14 +295,69 @@ namespace Wyd2.Client.ViewModel
                 pos.X--;
 
             Client.Movement(Player.ClientId, Player.Position, pos, 0, Player.Mob.FinalScore.MovementSpeed);
-
+            //Client.SingleAttack(Player.ClientId, Player.Position, Player.Position, new WYD2.Common.OutgoingPacketStructure.MTarget(Player.ClientId, -1), 64);
             Messages.Add(new TMessage($"Movimentado de {Player.Position } para { pos } ", TMessage.NormalColor));
             Position = pos;
+        }
+
+        private void SendMessage(object obj)
+        {
+            string message = Message;
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            if(message[0] == '/')
+            {// whisper
+                int indexOf = message.IndexOf(' ');
+
+                string command = message.Substring(1, indexOf - 1);
+                string onlyMessage = message.Substring(indexOf + 1, message.Length - indexOf - 1);
+
+                Client.SendCommand(Player.ClientId, command, onlyMessage);
+                Messages.Add(new TMessage(TMessage.NormalChat(Player.Mob.Name, onlyMessage), TMessage.WhisperColor));
+            }
+            else
+            {
+                Client.SendMessage(Player.ClientId, message);
+
+                Messages.Add(new TMessage(TMessage.NormalChat(Player.Mob.Name, message), TMessage.NormalColor));
+            }
+
+            Message = string.Empty;
         }
 
         #endregion
 
         #region Events from Server 
+
+        private void Network_OnDisconnect(object sender, EventArgs e)
+        {
+        }
+
+        private void Network_OnReceiveWhisperMessage(object sender, MWhisperMessagePacket e)
+        {
+            Messages.Add(new TMessage(TMessage.WhisperChat(e.Command, e.Message), TMessage.WhisperColor));
+        }
+
+        private void Network_OnReceiveMobDeath(object sender, MMobDeathPacket e)
+        {
+            if (e.Killed == Player.ClientId)
+            {
+                _synchronizationContext.Send(async (a) =>
+                {
+                    await DialogHost.Show(new GameMessage("Você morreu"), "RootDialog");
+                }, e);
+            }
+            else
+            {
+                var mob = Mobs.ById(e.Killed);
+                if (mob == null)
+                    return;
+
+                Mobs.Remove(mob);
+            }
+        }
+
         private void Network_OnReceiveCreateCharacterError(object sender, EventArgs e)
         {
             _synchronizationContext.Send(async (a) =>
@@ -348,6 +382,20 @@ namespace Wyd2.Client.ViewModel
             _synchronizationContext.Send((a) =>
             {
                 Messages.Add(new TMessage(e ? "Senha numérica correta" : "Senha numérica incorreta", TMessage.SystemColor));
+
+                if (e)
+                {
+                    _synchronizationContext.Send(async (a) =>
+                    {
+                        CharListViewModel context = new CharListViewModel(Client, SelChar);
+                        CharListWindow window = new CharListWindow()
+                        {
+                            DataContext = context
+                        };
+
+                        await DialogHost.Show(window, "RootDialog");
+                    }, null);
+                }
             }, e);
 
             if (e)
@@ -356,13 +404,12 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveUnknowPacket(object sender, ushort e)
         {
-            UnknowPackets.Add(e);
+            Console.WriteLine($"Pacote { e.ToString("X") } desconhecido");
         }
 
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
-            Client = new ClientControl(Network);
-            Client.Login("shepher", "kevin123", 762);
+            Client.Login("brotheragem", "bunda123", 762);
         }
 
         private void Network_OnSucessfullLogin(object sender, MLoginSuccessfulPacket e)
@@ -391,6 +438,11 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveCharToWorld(object sender, MCharToWorldPacket e)
         {
+            _synchronizationContext.Send((a) =>
+            {
+                DialogHost.CloseDialogCommand.Execute(null, null);
+            }, null);
+
             Mob = e.Mob;
             Player.ClientId = e.ClientIndex;
             Position = e.Position;
@@ -400,11 +452,11 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnReceiveCreateMob(object sender, MCreateMobPacket e)
         {
-            if(e.Index == Player.ClientId)
+            if (e.Index == Player.ClientId)
             {
                 Position = e.Position;
 
-                for(int i = 0; i < GameBasics.MAXL_AFFECT; i++)
+                for (int i = 0; i < GameBasics.MAXL_AFFECT; i++)
                 {
                     Player.Affects[i].Type = e.Affect[i].Index;
                     Player.Affects[i].Time = e.Affect[i].Time;
@@ -418,7 +470,7 @@ namespace Wyd2.Client.ViewModel
 
             _synchronizationContext.Send((a) =>
             {
-                Mobs.Add(new MobModel(e.Name, e.Index)
+                Mobs.Add(new MMob(e.Name, e.Index)
                 {
                     Score = e.Score,
                     Position = e.Position,
@@ -442,19 +494,18 @@ namespace Wyd2.Client.ViewModel
         {
             _synchronizationContext.Send((a) =>
             {
-                var mobs = Mobs.Where(x => x.Index == e.Header.ClientId);
-                if (mobs.Count() <= 0)
+                var mob = Mobs.ById(e.Header.ClientId);
+                if (mob == null)
                     return;
 
-                var mob = Mobs.First();
-                Messages.Add(new TMessage($"[{ mob.Name }]> { e.Message }", TMessage.NormalColor));
+                Messages.Add(new TMessage(TMessage.NormalChat(mob.Name, e.Message), TMessage.NormalColor));
             }, e);
         }
 
         private void Network_OnReceiveMovement(object sender, MMovePacket e)
         {
             int index = e.Header.ClientId;
-            if(index == Player.ClientId)
+            if (index == Player.ClientId)
             {
                 Position = e.Destiny;
 
@@ -467,6 +518,72 @@ namespace Wyd2.Client.ViewModel
 
             mob.Position = e.Destiny;
         }
+
+        private void Network_OnReceiveIncorrectLogin(object sender, MIncorrectLoginPacket e)
+        {
+            string message = string.Empty;
+            switch (e.Code)
+            {
+                case 131:
+                    message = "Esta conta não existe";
+                    break;
+                case 133:
+                    message = "Senha digita inválida";
+                    break;
+                case 161:
+                    message = "Conta em análise";
+                    break;
+            }
+
+            if (message == string.Empty)
+                return;
+            _synchronizationContext.Send(async (a) =>
+            {
+                await DialogHost.Show(new GameMessage(message), "RootDialog");
+            }, e);
+        }
+
+        private void Network_OnReceiveRefreshScore(object sender, MRefreshScorePacket e)
+        {
+            int index = e.Header.ClientId;
+            if (index == Player.ClientId)
+            {
+                FinalScore = e.Score;
+            }
+            else
+            {
+                var mob = Mobs.ById(index);
+
+                // todo : enviar pacote de solicitar mob
+                if (mob == null)
+                    return;
+
+                mob.Score = e.Score;
+            }
+        }
+
+        private void Network_OnReceiveSingleAttack(object sender, MSingleAttackPacket e)
+        {
+            int damage = e.Target.Damage;
+            int targetId = e.Target.Index;
+
+            if (targetId == Player.ClientId)
+            {
+                if (damage == -1)
+                    return;
+
+                CurrentHp -= damage; 
+            }
+            else
+            {
+                var mob = Mobs.ById(targetId);
+                if (mob == null)
+                    return;
+
+                //mob.Score.CurrHp -= damage;
+            }
+        }
+
         #endregion
     }
 }

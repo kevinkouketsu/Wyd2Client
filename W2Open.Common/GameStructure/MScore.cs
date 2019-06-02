@@ -5,7 +5,7 @@ namespace WYD2.Common.GameStructure
     /// <summary>
     /// Represents a set of information regard to a mob's status.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = ProjectBasics.DEFAULT_PACK)]
     public struct MScore
     {
         public int Level;
@@ -25,16 +25,17 @@ namespace WYD2.Common.GameStructure
         public byte Direction; // The direction the mob is facing.
         public byte ChaosRate; // TODO: unknown type!
 
-        public int MaxHp;
-        public int MaxMp;
-        public int CurrHp;
-        public int CurrMp;
+        public int MaxHp { get; set; }
+        public int MaxMp { get; set; }
+        public int CurrHp { get; set; }
+        public int CurrMp { get; set; }
 
         public short Str;
         public short Int;
         public short Dex;
         public short Con;
         
-        public unsafe fixed short Special[4]; // The 4 special points ("pontos de aprendizagem").
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public short[] Special; // The 4 special points ("pontos de aprendizagem").
     }
 }

@@ -90,5 +90,15 @@ namespace WYD2.Common.GameStructure
         public sbyte ResistIce;
         public sbyte ResistThunder;
         public sbyte ResistMagic;
+
+        public MMobCore()
+        {
+            FinalScore = new MScore();
+            BaseScore = new MScore();
+
+            Equip = new MEquip();
+            Equip.Items = new MItem[GameBasics.MAXL_EQUIP];
+            Inventory = new MInventory();
+        }
     }
 }

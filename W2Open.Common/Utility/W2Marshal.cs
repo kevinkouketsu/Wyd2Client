@@ -12,7 +12,7 @@ namespace WYD2.Common.Utility
         /// <summary>
         /// Marshals a raw buffer to a given marshalable struct.
         /// </summary>
-        public static unsafe T GetStructure<T>(byte[] buffer, int offset = 0) where T : struct
+        public static unsafe T GetStructure<T>(byte[] buffer, int offset = 0) 
         {
             fixed (byte* bufferPin = &buffer[offset])
             {
@@ -20,12 +20,12 @@ namespace WYD2.Common.Utility
             }
         }
 
-        public static unsafe T GetStructure<T>(CCompoundBuffer buffer) where T : struct
+        public static unsafe T GetStructure<T>(CCompoundBuffer buffer) 
         {
             return GetStructure<T>(buffer.RawBuffer, buffer.Offset);
         }
 
-        public static unsafe T GetStructure<T>(byte* buffer) where T : struct
+        public static unsafe T GetStructure<T>(byte* buffer) 
         {
             return (T)Marshal.PtrToStructure(new IntPtr(buffer), typeof(T));
         }

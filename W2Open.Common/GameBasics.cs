@@ -14,6 +14,8 @@
         public const int MAXL_INVENTORY = 64;
         #endregion
 
+        public const ushort MAX_SPAWN_MOB = 30000;
+        public const ushort MAX_ITEMLIST = 6000;
         /// <summary>
         /// The highest move speed a mob can get in the game.
         /// </summary>

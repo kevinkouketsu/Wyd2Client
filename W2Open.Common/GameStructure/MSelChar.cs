@@ -20,7 +20,7 @@ namespace WYD2.Common.GameStructure
     /// Contains data representing the character selection scene. Used in some game packets.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MSelChar
+    public struct MSelChar 
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = GameBasics.MAXL_ACC_MOB)]
         public short[] SPosX;

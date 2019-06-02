@@ -20,7 +20,7 @@ namespace WYD2.Common.GameStructure
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
     public struct MItem_Effects
     {
-        public sbyte Code;
+        public sbyte Index;
         public sbyte Value;
     }
 

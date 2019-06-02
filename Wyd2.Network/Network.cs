@@ -12,7 +12,7 @@ using WYD2.Common;
 using WYD2.Common.GameStructure;
 using WYD2.Common.Utility;
 
-namespace WYD2.Network
+namespace WYD2.Control
 {
     public class TCP_StateConnection
     {
@@ -28,6 +28,7 @@ namespace WYD2.Network
     {
         public object _locker = new object();
         protected event EventHandler<EventArgs> OnSuccessfullConnect;
+        protected event EventHandler<EventArgs> OnDisconnect;
 
         protected abstract void InterpretPacket(int packetId, byte[] buffer);
 
@@ -119,7 +120,8 @@ namespace WYD2.Network
 
                 if (read == 0)
                 {
-                    throw new Exception("Disconnected");
+                    OnDisconnect?.Invoke(this, EventArgs.Empty);
+                    return;
                 }
 
                 lock (_locker)
@@ -147,10 +149,13 @@ namespace WYD2.Network
 
                 StartReceive(State);
             }
+            catch(SocketException e)
+            {
+                throw e;
+            }
             catch (Exception e)
             {
                 throw e;
-                // OnException(e);
             }
         }
     }

@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Wyd2.Client.View"
-        xmlns:state="clr-namespace:Wyd2.Client.Model"
+        xmlns:state="clr-namespace:WYD2.Common.GameStructure;assembly=WYD2.Common"
         xmlns:component="clr-namespace:Wyd2.Client.Component"
-        mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
         Title="WYD2Client - by shepher" 
-        Height="450"
+        Height="550"
         Width="800"
         Background="{DynamicResource MaterialDesignPaper}"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}">
@@ -51,104 +51,140 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition/>
+                <RowDefinition Height="2*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.7*"/>
+                    <ColumnDefinition Width="2*"/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                
-                <!-- Seleção de Personagem -->
-                <Grid>
+
+
+                <!-- Informações do personagem -->
+                <Grid Grid.Column="0" Margin="8">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="35"/>
+                        <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <TextBlock
-                        Margin="8"
-                        Text="Charlist"
-                        FontSize="12"
-                        Opacity=".68"
-                        RenderTransformOrigin=".5,.5">
-                    </TextBlock>
-                    <Border
-                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                        ClipToBounds="True"
-                        Grid.Row="1">
+                    <GroupBox
+                        Header="Informações"
+                        BorderBrush="Transparent">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="120" />
-                                <RowDefinition Height="32" />
-                            </Grid.RowDefinitions>
-                            <ListView 
-                                ItemsSource="{Binding CharName}"
-                                SelectedItem="{Binding SelectedCharlistCharacter}">
-                            </ListView>
-                            <StackPanel
-                                Grid.Row="1"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Right">
-                                <Button
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    Grid.Row="0"
-                                    Height="22"
-                                    Width="22"
-                                    Command="{Binding DeleteCharacterCommand}"
-                                    Margin="0 0 10 10">
-                                    <materialDesign:PackIcon
-                                        Kind="Remove"
-                                        Height="16"
-                                        Width="16" />
-                                </Button>
-                                <Button
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Right"
-                                    Grid.Row="0"
-                                    Height="22"
-                                    Width="22"
-                                    Command="{Binding CreateCharacterCommand}"
-                                    Margin="0 0 10 10">
-                                    <materialDesign:PackIcon
-                                        Kind="Plus"
-                                        Height="16"
-                                        Width="16" />
-                                </Button>
-                                <Button
-                                    Style="{StaticResource MaterialDesignRaisedButton}"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Right"
-                                    Grid.Row="0"
-                                    Height="23"
-                                    Width="80"
-                                    Command="{Binding EnterCharacterCommand}"
-                                    Margin="0 0 10 10">
-                                    <TextBlock FontSize="12">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="Entrar"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding State}" Value="{x:Static state:TPlayerState.Play}">
-                                                        <Setter Property="Text" Value="Deslogar"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Button>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="55"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="55"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Nome:" FontWeight="Bold"/>
+                                <TextBlock Text="Level:" FontWeight="Bold"/>
+                                <TextBlock Text="HP:" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                                <TextBlock Text="{Binding Level, Mode=OneWay}"/>
+                                <TextBlock>
+                                    <Run Text="{Binding MaxHp}"/>
+                                    <Run Text=" / "/>
+                                    <Run Text="{Binding CurrentHp}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Posição:" FontWeight="Bold"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="{Binding Position, Mode=OneWay}"/>
                             </StackPanel>
                         </Grid>
-                    </Border>
-                </Grid>
 
-                <!-- Chat -->
+                    </GroupBox>
+                    <GroupBox
+                        Grid.Row="1" Grid.ColumnSpan="2"
+                        Header="Macro"
+                        Margin="0 4"
+                        BorderBrush="Transparent">
+                        <Grid HorizontalAlignment="Left">
+                            <StackPanel>
+                                <StackPanel>
+                                    <TextBlock 
+                                        Text="Status" 
+                                        FontWeight="bOLD"/>
+                                    <ToggleButton 
+                                        IsChecked="{Binding IsMacroEnabled}"
+                                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
+                                    </ToggleButton>
+                                </StackPanel>
+                                <StackPanel >
+                                    <TextBlock Text="Tipo" 
+                                               FontWeight="bOLD"
+                                               Margin="0 4"/>
+                                    <RadioButton 
+                                        Style="{StaticResource MaterialDesignRadioButton}"
+                                        GroupName="MacroType"
+                                        IsChecked="{Binding IsPhysical}"
+                                        ToolTip="Macro físico">Físico</RadioButton>
+                                    <RadioButton 
+                                        Style="{StaticResource MaterialDesignRadioButton}"
+                                        GroupName="MacroType"
+                                        IsChecked="{Binding IsMagical}"
+                                        ToolTip="Macro de ataque mágico">Mágico</RadioButton>
+                                </StackPanel>
+                                
+                                
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+                
+                <!-- Visão -->
                 <Grid Grid.Column="1"
                       Margin="0 4">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Margin="8"
+                            Text="Visão"
+                            FontSize="12"
+                            Opacity=".68"
+                            RenderTransformOrigin=".5,.5">
+                        </TextBlock>
+                        <ListBox
+                            Grid.Row="1"
+                            ItemsSource="{Binding Mobs}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock>
+                                        <Run Text="{Binding Name, Mode=OneWay}"/>
+                                        <Run Text="{Binding Index, StringFormat=' - (Index: {0})', Mode=OneWay}"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <!-- Chat -->
+                <Grid Margin="0 4">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="32"/>
                         <RowDefinition />
@@ -162,9 +198,24 @@
                         Opacity=".68"
                         RenderTransformOrigin=".5,.5">
                     </TextBlock>
+
+                    <Button
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Height="23"
+                        Width="80"
+                        Command="{Binding EnterCharacterCommand}"
+                        Margin="0 5 10 0">
+                        <TextBlock 
+                            FontSize="12" Text="Limpar">
+                        </TextBlock>
+                    </Button>
+                    
                     <ListView
                         ItemsSource="{Binding Messages}"
-                        Grid.Row="1">
+                        Grid.Row="1"
+                        component:ListView.AutoScroll="True">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -176,81 +227,41 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <Button
-                        Grid.Row="2"
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Height="23"
-                        Width="80"
-                        Command="{Binding EnterCharacterCommand}"
-                        Margin="0 0 10 10">
-                        <TextBlock 
-                            FontSize="12" Text="Limpar">
-                        </TextBlock>
-                    </Button>
-                </Grid>
 
-                <!-- Informações do personagem -->
-                <Grid Grid.Column="2" Margin="8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="75"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel>
-                        <TextBlock Text="Nome:" FontWeight="Bold"/>
-                        <TextBlock Text="Level:" FontWeight="Bold"/>
-                        <TextBlock Text="HP:" FontWeight="Bold"/>
-                        <TextBlock Text="Posição:" FontWeight="Bold"/>
-                    </StackPanel>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox 
+                            Name="MessageTextBox"
+                            Text="{Binding Message}"
+                            materialDesign:HintAssist.Hint="Digite sua mensagem" >
+                            <TextBox.InputBindings>
+                                <KeyBinding
+                                    Key="Return"
+                                    Command="{Binding SendMessageCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
 
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="{Binding Name, Mode=OneWay}"/>
-                        <TextBlock Text="{Binding Level, Mode=OneWay}"/>
-                        <TextBlock>
-                            <Run Text="{Binding MaxHp}"/>
-                            <Run Text=" / "/>
-                            <Run Text="{Binding CurrentHp}"/>
-                        </TextBlock>
-                        <TextBlock Text="{Binding Position, Mode=OneWay}"/>
-                    </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            Style="{StaticResource MaterialDesignRaisedLightButton}"
+                            Height="23"
+                            Width="80"
+                            IsDefault="True"
+                            Command="{Binding SendMessageCommand}">
+                            <TextBlock 
+                                FontSize="12" Text="Enviar">
+                            </TextBlock>
+                        </Button>
+
+                    </Grid>
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <!-- Chat -->
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Margin="8"
-                        Text="Visão"
-                        FontSize="12"
-                        Opacity=".68"
-                        RenderTransformOrigin=".5,.5">
-                    </TextBlock>
-                    <ListBox
-                        Grid.Row="1"
-                        ItemsSource="{Binding Mobs}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <TextBlock>
-                                        <Run Text="{Binding Name, Mode=OneWay}"/>
-                                        <Run Text="{Binding Index, StringFormat=' - (Index: {0})', Mode=OneWay}"/>
-                                    </TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </Grid>
+            <!-- Chat message -->
+
         </Grid>
     </materialDesign:DialogHost>
 </Window>

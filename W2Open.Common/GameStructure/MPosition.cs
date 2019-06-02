@@ -6,7 +6,7 @@ namespace WYD2.Common.GameStructure
     /// Represents a 4-byte bidimensional position in the game.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
-    public struct MPosition
+    public class MPosition
     {
         public short X;
         public short Y;

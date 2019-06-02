@@ -3,18 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WYD2.Common.GameStructure;
 
-namespace Wyd2.Client.Model
+namespace WYD2.Common.GameStructure
 {
-    public class MobModel
+    public class MMob
     {
         #region Public Properties
 
         /// <summary>
         /// Index of mob
         /// </summary>
-        public int Index { get; }
+        public ushort Index { get; }
 
         /// <summary>
         /// Name of mob
@@ -35,7 +34,7 @@ namespace Wyd2.Client.Model
 
         #region Constructor
 
-        public MobModel(string name, int index)
+        public MMob(string name, ushort index)
         {
             Name = name;
             Index = index;

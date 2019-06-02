@@ -14,9 +14,11 @@
     <WarningLevel>4</WarningLevel>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -78,6 +80,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\CharListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,18 +93,21 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AsyncObservableCollection.cs" />
+    <Compile Include="Component\ListViewAutoScroll.cs" />
     <Compile Include="Component\MapViewControl.xaml.cs">
       <DependentUpon>MapViewControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Component\ZoomBorder.cs" />
     <Compile Include="Extension.cs" />
+    <Compile Include="Model\CharListWindow.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
     <Compile Include="Model\GameMessageModel.cs" />
-    <Compile Include="Model\MobModel.cs" />
-    <Compile Include="Model\PlayerModel.cs" />
+    <Compile Include="Model\MainWindowModel.cs" />
+    <Compile Include="Model\TMessage.cs" />
     <Compile Include="Native.cs" />
     <Compile Include="ViewModel\Base\BaseCommand.cs" />
     <Compile Include="ViewModel\Base\BaseViewModel.cs" />
+    <Compile Include="ViewModel\CharListViewModel.cs" />
     <Compile Include="ViewModel\CreateCharacterViewModel.cs" />
     <Compile Include="ViewModel\DeleteCharacterViewModel.cs" />
     <Compile Include="ViewModel\GameMessageViewModel.cs" />
@@ -111,6 +120,9 @@
     </Compile>
     <Compile Include="View\GameMessage.xaml.cs">
       <DependentUpon>GameMessage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CharListWindow.xaml.cs">
+      <DependentUpon>CharListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -149,9 +161,9 @@
       <Project>{9e37305b-badd-49e4-842a-fc45b8ce0b95}</Project>
       <Name>Wyd2.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Wyd2.Network\Wyd2.Network.csproj">
+    <ProjectReference Include="..\Wyd2.Network\Wyd2.Control.csproj">
       <Project>{8C31F218-78BB-4C65-96AD-8D76B9878027}</Project>
-      <Name>Wyd2.Network</Name>
+      <Name>Wyd2.Control</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -160,5 +172,6 @@
   <ItemGroup>
     <Resource Include="Res\HeightMap.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,30 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Wyd2.Client.ViewModel;
-using WYD2.Control;
 
 namespace Wyd2.Client.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LoginWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CharListWindow : UserControl
     {
-        public Random rand = new Random();
-        public MainWindow()
+        public CharListWindow()
         {
             InitializeComponent();
-
-            DataContext = new PlayerViewModel();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            int posX = rand.Next(1200, 2500);
-            int posY = rand.Next(1200, 2500);
-
-            MessageBox.Show($" { posX } { posY }");
         }
     }
 }

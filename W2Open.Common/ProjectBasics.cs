@@ -11,5 +11,7 @@
         /// This is the memory pack alignment used in the game's client, so we have to respect that.
         /// </summary>
         public const int DEFAULT_PACK = 8;
+
+        public const int MAX_ENEMIES = 20;
     }
 }
