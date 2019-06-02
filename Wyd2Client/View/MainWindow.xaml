@@ -48,220 +48,205 @@
         <materialDesign:DialogHost.DialogContent>
             <Grid/>
         </materialDesign:DialogHost.DialogContent>
+        <DockPanel>
+            <Menu
+                DockPanel.Dock="Top"
+                IsMainMenu="True" 
+                Margin="5 5 0 5"
+                BorderBrush="White"
+                BorderThickness="0 0 0 1">
+                <MenuItem
+                    Header="_Macro">
+                    <MenuItem Header="Físico"
+                              IsCheckable="True"
+                              IsChecked="{Binding IsPhysical}"/>
+                    <MenuItem Header="Mágico"
+                              IsCheckable="True"
+                              IsChecked="{Binding IsMagical}"/>
+                    <Separator/>
+                    <MenuItem Header="Configuração"
+                              Command="{Binding ConfigMacroComand}"/>
+                </MenuItem>
+            </Menu>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
 
-                <!-- Informações do personagem -->
-                <Grid Grid.Column="0" Margin="8">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <GroupBox
+                    <!-- Informações do personagem -->
+                    <Grid Grid.Column="0" Margin="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <GroupBox
                         Header="Informações"
                         BorderBrush="Transparent">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="55"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="55"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel>
-                                <TextBlock Text="Nome:" FontWeight="Bold"/>
-                                <TextBlock Text="Level:" FontWeight="Bold"/>
-                                <TextBlock Text="HP:" FontWeight="Bold"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="55"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="55"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Nome:" FontWeight="Bold"/>
+                                    <TextBlock Text="Level:" FontWeight="Bold"/>
+                                    <TextBlock Text="HP:" FontWeight="Bold"/>
+                                </StackPanel>
 
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="{Binding Name, Mode=OneWay}"/>
-                                <TextBlock Text="{Binding Level, Mode=OneWay}"/>
-                                <TextBlock>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                                    <TextBlock Text="{Binding Level, Mode=OneWay}"/>
+                                    <TextBlock>
                                     <Run Text="{Binding MaxHp}"/>
                                     <Run Text=" / "/>
                                     <Run Text="{Binding CurrentHp}"/>
-                                </TextBlock>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Posição:" FontWeight="Bold"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="3">
-                                <TextBlock Text="{Binding Position, Mode=OneWay}"/>
-                            </StackPanel>
-                        </Grid>
-
-                    </GroupBox>
-                    <GroupBox
-                        Grid.Row="1" Grid.ColumnSpan="2"
-                        Header="Macro"
-                        Margin="0 4"
-                        BorderBrush="Transparent">
-                        <Grid HorizontalAlignment="Left">
-                            <StackPanel>
-                                <StackPanel>
-                                    <TextBlock 
-                                        Text="Status" 
-                                        FontWeight="bOLD"/>
-                                    <ToggleButton 
-                                        IsChecked="{Binding IsMacroEnabled}"
-                                        Style="{StaticResource MaterialDesignSwitchToggleButton}">
-                                    </ToggleButton>
+                                    </TextBlock>
                                 </StackPanel>
-                                <StackPanel >
-                                    <TextBlock Text="Tipo" 
-                                               FontWeight="bOLD"
-                                               Margin="0 4"/>
-                                    <RadioButton 
-                                        Style="{StaticResource MaterialDesignRadioButton}"
-                                        GroupName="MacroType"
-                                        IsChecked="{Binding IsPhysical}"
-                                        ToolTip="Macro físico">Físico</RadioButton>
-                                    <RadioButton 
-                                        Style="{StaticResource MaterialDesignRadioButton}"
-                                        GroupName="MacroType"
-                                        IsChecked="{Binding IsMagical}"
-                                        ToolTip="Macro de ataque mágico">Mágico</RadioButton>
+
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Posição:" FontWeight="Bold"/>
                                 </StackPanel>
-                                
-                                
-                            </StackPanel>
-                        </Grid>
-                    </GroupBox>
-                </Grid>
-                
-                <!-- Visão -->
-                <Grid Grid.Column="1"
+
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Text="{Binding Position, Mode=OneWay}"/>
+                                </StackPanel>
+                            </Grid>
+
+                        </GroupBox>
+                    </Grid>
+
+                    <!-- Visão -->
+                    <Grid Grid.Column="1"
                       Margin="0 4">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="32"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="32"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock
                             Margin="8"
                             Text="Visão"
                             FontSize="12"
                             Opacity=".68"
                             RenderTransformOrigin=".5,.5">
-                        </TextBlock>
-                        <ListBox
+                            </TextBlock>
+                            <ListBox
                             Grid.Row="1"
                             ItemsSource="{Binding Mobs}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <TextBlock>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBlock>
                                         <Run Text="{Binding Name, Mode=OneWay}"/>
                                         <Run Text="{Binding Index, StringFormat=' - (Index: {0})', Mode=OneWay}"/>
-                                        </TextBlock>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                                            </TextBlock>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
                     </Grid>
+
                 </Grid>
 
-            </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <!-- Chat -->
+                    <Grid Margin="0 4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition />
+                            <RowDefinition Height="32"/>
+                        </Grid.RowDefinitions>
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <!-- Chat -->
-                <Grid Margin="0 4">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="32"/>
-                        <RowDefinition />
-                        <RowDefinition Height="32"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock
+                        <TextBlock
                         Margin="8"
                         Text="Mensagens"
                         FontSize="12"
                         Opacity=".68"
                         RenderTransformOrigin=".5,.5">
-                    </TextBlock>
-
-                    <Button
-                        Style="{StaticResource MaterialDesignRaisedButton}"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"
-                        Height="23"
-                        Width="80"
-                        Command="{Binding EnterCharacterCommand}"
-                        Margin="0 5 10 0">
-                        <TextBlock 
-                            FontSize="12" Text="Limpar">
                         </TextBlock>
-                    </Button>
-                    
-                    <ListView
-                        ItemsSource="{Binding Messages}"
-                        Grid.Row="1"
-                        component:ListView.AutoScroll="True">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <TextBlock
+
+                        <Button
+                            Style="{StaticResource MaterialDesignRaisedButton}"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Right"
+                            Height="23"
+                            Width="80"
+                            Margin="0 5 10 0"
+                            Command="{Binding CleanMessagesCommand}">
+                           
+                            <TextBlock 
+                                FontSize="12" Text="Limpar">
+                            </TextBlock>
+                        </Button>
+
+                        <ListView
+                            ItemsSource="{Binding Messages}"
+                            Grid.Row="1"
+                            component:ListView.AutoScroll="True">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBlock
                                         Foreground="{Binding Color}"
                                         Text="{Binding Message}"
                                         TextWrapping="Wrap"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
 
-                    <Grid Grid.Row="2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox 
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox 
                             Name="MessageTextBox"
                             Text="{Binding Message}"
                             materialDesign:HintAssist.Hint="Digite sua mensagem" >
-                            <TextBox.InputBindings>
-                                <KeyBinding
+                                <TextBox.InputBindings>
+                                    <KeyBinding
                                     Key="Return"
                                     Command="{Binding SendMessageCommand}" />
-                            </TextBox.InputBindings>
-                        </TextBox>
+                                </TextBox.InputBindings>
+                            </TextBox>
 
-                        <Button
+                            <Button
                             Grid.Column="1"
                             Style="{StaticResource MaterialDesignRaisedLightButton}"
                             Height="23"
                             Width="80"
                             IsDefault="True"
                             Command="{Binding SendMessageCommand}">
-                            <TextBlock 
+                                <TextBlock 
                                 FontSize="12" Text="Enviar">
-                            </TextBlock>
-                        </Button>
+                                </TextBlock>
+                            </Button>
 
+                        </Grid>
                     </Grid>
                 </Grid>
+
+                <!-- Chat message -->
+
             </Grid>
-
-            <!-- Chat message -->
-
-        </Grid>
+        </DockPanel>
     </materialDesign:DialogHost>
 </Window>

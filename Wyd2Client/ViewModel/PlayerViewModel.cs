@@ -99,6 +99,9 @@ namespace Wyd2.Client.ViewModel
             get => Model.IsPhysical;
             set
             {
+                if (value)
+                    IsMagical = false;
+
                 Model.IsPhysical = value;
 
                 Macro = new PhysicalMacro(Player, Mobs);
@@ -190,6 +193,7 @@ namespace Wyd2.Client.ViewModel
         public ICommand MovementCommand { get; }
         public ICommand SendMessageCommand { get; }
         public ICommand EnterCommand { get; }
+        public ICommand CleanMessagesCommand { get; }
         #endregion
 
         #region Private Properties
@@ -222,6 +226,10 @@ namespace Wyd2.Client.ViewModel
 
             // Commands 
             MovementCommand = new RelayCommand(Movement, CanMovement);
+            CleanMessagesCommand = new RelayCommand((a) =>
+            {
+                Messages.Clear();
+            }, (a) => true);
 
             SendMessageCommand = new RelayCommand(SendMessage, (b) => true);
 
@@ -267,7 +275,7 @@ namespace Wyd2.Client.ViewModel
             if (!IsPhysical && !IsMagical)
                 return;
 
-            Macro.DoMacro();
+            //Macro.DoMacro();
         }
 
         #endregion
@@ -580,7 +588,7 @@ namespace Wyd2.Client.ViewModel
                 if (mob == null)
                     return;
 
-                //mob.Score.CurrHp -= damage;
+                mob.Score.CurrHp -= damage;
             }
         }
 
