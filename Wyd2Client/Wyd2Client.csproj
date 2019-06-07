@@ -84,6 +84,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\MacroConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -102,6 +106,7 @@
     <Compile Include="Model\CharListWindow.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
     <Compile Include="Model\GameMessageModel.cs" />
+    <Compile Include="Model\MacroConfigModel.cs" />
     <Compile Include="Model\MainWindowModel.cs" />
     <Compile Include="Model\TMessage.cs" />
     <Compile Include="Native.cs" />
@@ -111,6 +116,7 @@
     <Compile Include="ViewModel\CreateCharacterViewModel.cs" />
     <Compile Include="ViewModel\DeleteCharacterViewModel.cs" />
     <Compile Include="ViewModel\GameMessageViewModel.cs" />
+    <Compile Include="ViewModel\MacroConfigViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="View\CreateCharacterWindow.xaml.cs">
       <DependentUpon>CreateCharacterWindow.xaml</DependentUpon>
@@ -123,6 +129,9 @@
     </Compile>
     <Compile Include="View\CharListWindow.xaml.cs">
       <DependentUpon>CharListWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MacroConfigWindow.xaml.cs">
+      <DependentUpon>MacroConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
