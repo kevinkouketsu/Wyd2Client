@@ -12,23 +12,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wyd2.Client.ViewModel;
 
-namespace Wyd2.Client.Component
+namespace Wyd2.Client.View
 {
     /// <summary>
-    /// Interaction logic for MapViewControl.xaml
+    /// Interação lógica para LoginWindow.xam
     /// </summary>
-    public partial class MapViewControl : UserControl
+    public partial class LoginWindow : UserControl, IHavePassword
     {
-        public MapViewControl()
+        public string Password
         {
-            InitializeComponent();
+            get => PasswordBox.Password;
         }
 
-        public void SetMapPosition(int posX, int posY)
+        public LoginWindow()
         {
-            scrollViewer.ScrollToHorizontalOffset(posX);
-            scrollViewer.ScrollToVerticalOffset(posY);
+            InitializeComponent();
         }
     }
 }

@@ -41,8 +41,7 @@ namespace Wyd2.Client.ViewModel
         {
             if (_method != null)
                 _method(parameter);
-            else if (_methodWithoutArgs != null)
-                _methodWithoutArgs();
+            else _methodWithoutArgs?.Invoke();
         }
 
         public event EventHandler CanExecuteChanged

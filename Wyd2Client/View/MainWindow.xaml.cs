@@ -26,16 +26,11 @@ namespace Wyd2.Client.View
         public MainWindow()
         {
             InitializeComponent();
-
-            DataContext = new PlayerViewModel();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void DialogHost_Loaded(object sender, RoutedEventArgs e)
         {
-            int posX = rand.Next(1200, 2500);
-            int posY = rand.Next(1200, 2500);
-
-            MessageBox.Show($" { posX } { posY }");
+            DataContext = new PlayerViewModel();
         }
     }
 }

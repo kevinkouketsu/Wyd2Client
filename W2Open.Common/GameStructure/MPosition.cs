@@ -8,8 +8,8 @@ namespace WYD2.Common.GameStructure
     [StructLayout(LayoutKind.Sequential, Pack = ProjectBasics.DEFAULT_PACK)]
     public class MPosition
     {
-        public short X;
-        public short Y;
+        public short X { get; set; }
+        public short Y { get; set; }
 
         public override string ToString()
         {

@@ -126,7 +126,6 @@ namespace Wyd2.Client.ViewModel
         }
 
         #region Character information
-
         public string Name
         {
             get => Player.Mob.Name;
@@ -190,20 +189,24 @@ namespace Wyd2.Client.ViewModel
 
         public MainWindowModel Model { get; } = new MainWindowModel();
 
-        public ICommand MovementCommand { get; }
         public ICommand SendMessageCommand { get; }
         public ICommand EnterCommand { get; }
         public ICommand CleanMessagesCommand { get; }
+        public ICommand MoveCommand { get; }
         #endregion
 
         #region Private Properties
 
         private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
-        private ClientConnection Network { get; }
+        private string Username { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+
+        private ClientConnection Network { get; set; }
         private ClientControl Client { get; set; }
 
-        private DispatcherTimer Timer { get; }
+        private DispatcherTimer Timer { get; } = new DispatcherTimer();
 
         private MacroSystem Macro { get; set; }
         #endregion
@@ -216,22 +219,45 @@ namespace Wyd2.Client.ViewModel
 
             W2Objects.ItemList = ConfigReader.ReadItemList("ItemList.csv", "ItemEffect.h");
 
-            Network = new ClientConnection("51.81.0.90", 8281);
-            Client = new ClientControl(Network);
-
-            Timer = new DispatcherTimer();
-            Timer.Interval = new TimeSpan(0, 0, 0, 0, 1500);
-            Timer.Tick += Timer_Tick;
-            Timer.Start();
-
             // Commands 
-            MovementCommand = new RelayCommand(Movement, CanMovement);
+            MoveCommand = new RelayCommand(Movement, CanMovement);
             CleanMessagesCommand = new RelayCommand((a) =>
             {
                 Messages.Clear();
             }, (a) => true);
 
-            SendMessageCommand = new RelayCommand(SendMessage, (b) => true);
+            SendMessageCommand = new RelayCommand(SendMessage, (b) => State == TPlayerState.Play);
+
+            Start();
+        }
+
+        #endregion
+
+        #region Start connection
+        public async void Start()
+        {
+            LoginWindowViewModel context = new LoginWindowViewModel();
+            LoginWindow window = new LoginWindow()
+            {
+                DataContext = context
+            };
+
+            //            await DialogHost.Show(window, "RootDialog");
+
+            context.Login = "bodecardoso2";
+            context.Token = "1208";
+
+            Username = context.Login;
+            Password = "kevin123";//(window as IHavePassword).Password;
+            Token = context.Token;
+
+            context.SelectedServer = context.ServerList[2];
+            Network = new ClientConnection(context.SelectedServer.IpAddress, 8281);
+            Client = new ClientControl(Network);
+
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 1500);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
 
             Network.OnSuccessfullConnect += this.Network_OnSuccessfullConnect;
             Network.OnDisconnect += this.Network_OnDisconnect;
@@ -261,9 +287,7 @@ namespace Wyd2.Client.ViewModel
 
             Network.Connect();
         }
-
         #endregion
-
         #region Timer
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -283,29 +307,21 @@ namespace Wyd2.Client.ViewModel
 
         private bool CanMovement(object arg)
         {
-            return true;
+            return State == TPlayerState.Play;
         }
 
         private void Movement(object obj)
         {
-            string cmd = obj as string;
-            if (cmd == null)
-                throw new Exception();
+            var local = (Point)obj;
 
-            MPosition pos = Position;
-            if (cmd == "Up")
-                pos.Y++;
-            else if (cmd == "Down")
-                pos.Y--;
-            else if (cmd == "Right")
-                pos.X++;
-            else
-                pos.X--;
+            MPosition finalPosition = new MPosition();
+            finalPosition.X = (short)local.X;
+            finalPosition.Y = (short)local.Y;
 
-            Client.Movement(Player.ClientId, Player.Position, pos, 0, Player.Mob.FinalScore.MovementSpeed);
-            //Client.SingleAttack(Player.ClientId, Player.Position, Player.Position, new WYD2.Common.OutgoingPacketStructure.MTarget(Player.ClientId, -1), 64);
-            Messages.Add(new TMessage($"Movimentado de {Player.Position } para { pos } ", TMessage.NormalColor));
-            Position = pos;
+            Client.Movement(Player.ClientId, Player.Position, finalPosition, 0, Player.Mob.FinalScore.MovementSpeed);
+
+            Messages.Add(new TMessage($"Movido para { finalPosition }", TMessage.NormalColor));
+            Position = finalPosition;
         }
 
         private void SendMessage(object obj)
@@ -323,6 +339,11 @@ namespace Wyd2.Client.ViewModel
 
                 Client.SendCommand(Player.ClientId, command, onlyMessage);
                 Messages.Add(new TMessage(TMessage.NormalChat(Player.Mob.Name, onlyMessage), TMessage.WhisperColor));
+            }
+            else if(message[0] == '#')
+            {
+                if (message == "#tele")
+                    Client.UseTeleport(Player.ClientId);
             }
             else
             {
@@ -354,6 +375,8 @@ namespace Wyd2.Client.ViewModel
                 _synchronizationContext.Send(async (a) =>
                 {
                     await DialogHost.Show(new GameMessage("Você morreu"), "RootDialog");
+
+                    Client.Reborn(Player.ClientId);
                 }, e);
             }
             else
@@ -417,7 +440,7 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
-            Client.Login("brotheragem", "bunda123", 762);
+            Client.Login(Username, Password,762);
         }
 
         private void Network_OnSucessfullLogin(object sender, MLoginSuccessfulPacket e)
@@ -426,7 +449,7 @@ namespace Wyd2.Client.ViewModel
             AccountName = e.AccName;
 
             PacketSecurity.HashTable = e.HashKeyTable;
-            Client.SendToken("1208", 0);
+            Client.SendToken(Token, 0);
 
             Player.State = TPlayerState.SelChar;
         }
@@ -540,6 +563,9 @@ namespace Wyd2.Client.ViewModel
                     break;
                 case 161:
                     message = "Conta em análise";
+                    break;
+                case 412:
+                    message = "Conta bloqueada por 3 horas";
                     break;
             }
 

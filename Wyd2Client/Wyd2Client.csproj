@@ -64,9 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Component\MapViewControl.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Component\MiniMap.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\CreateCharacterWindow.xaml">
       <SubType>Designer</SubType>
@@ -84,6 +84,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\LoginWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MacroConfigWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -98,14 +102,14 @@
     </Compile>
     <Compile Include="AsyncObservableCollection.cs" />
     <Compile Include="Component\ListViewAutoScroll.cs" />
-    <Compile Include="Component\MapViewControl.xaml.cs">
-      <DependentUpon>MapViewControl.xaml</DependentUpon>
+    <Compile Include="Component\MiniMap.xaml.cs">
+      <DependentUpon>MiniMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Component\ZoomBorder.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Model\CharListWindow.cs" />
     <Compile Include="Model\CreateCharacterModel.cs" />
     <Compile Include="Model\GameMessageModel.cs" />
+    <Compile Include="Model\LoginWindowModel.cs" />
     <Compile Include="Model\MacroConfigModel.cs" />
     <Compile Include="Model\MainWindowModel.cs" />
     <Compile Include="Model\TMessage.cs" />
@@ -116,6 +120,7 @@
     <Compile Include="ViewModel\CreateCharacterViewModel.cs" />
     <Compile Include="ViewModel\DeleteCharacterViewModel.cs" />
     <Compile Include="ViewModel\GameMessageViewModel.cs" />
+    <Compile Include="ViewModel\LoginWindowViewModel.cs" />
     <Compile Include="ViewModel\MacroConfigViewModel.cs" />
     <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="View\CreateCharacterWindow.xaml.cs">
@@ -129,6 +134,9 @@
     </Compile>
     <Compile Include="View\CharListWindow.xaml.cs">
       <DependentUpon>CharListWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MacroConfigWindow.xaml.cs">
       <DependentUpon>MacroConfigWindow.xaml</DependentUpon>

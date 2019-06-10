@@ -12,25 +12,9 @@
         Height="550"
         Width="800"
         Background="{DynamicResource MaterialDesignPaper}"
-        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        >
     <Window.InputBindings>
-        <KeyBinding
-            Key="Up"
-            Command="{Binding MovementCommand}"
-            CommandParameter="Up"/>
-        <KeyBinding
-            Key="Down"
-            Command="{Binding MovementCommand}"
-            CommandParameter="Down"/>
-        <KeyBinding
-            Key="Right"
-            Command="{Binding MovementCommand}"
-            CommandParameter="Right"/>
-        <KeyBinding
-            Key="Left"
-            Command="{Binding MovementCommand}"
-            CommandParameter="Left" />
-
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
@@ -44,6 +28,7 @@
 
     <materialDesign:DialogHost 
         Identifier="RootDialog"
+        Loaded="DialogHost_Loaded"
         Margin="8">
         <materialDesign:DialogHost.DialogContent>
             <Grid/>
@@ -135,15 +120,15 @@
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
                             <TextBlock
-                            Margin="8"
-                            Text="Visão"
-                            FontSize="12"
-                            Opacity=".68"
-                            RenderTransformOrigin=".5,.5">
+                                Margin="8"
+                                Text="Visão"
+                                FontSize="12"
+                                Opacity=".68"
+                                RenderTransformOrigin=".5,.5">
                             </TextBlock>
                             <ListBox
-                            Grid.Row="1"
-                            ItemsSource="{Binding Mobs}">
+                                Grid.Row="1"
+                                ItemsSource="{Binding Mobs}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -156,8 +141,19 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
                         </Grid>
+
                     </Grid>
 
+                    <Grid Grid.Column="2">
+                        <component:MiniMap
+                                MiniMapImage="/Res/HeightMap.bmp"
+                                MoveCommand="{Binding MoveCommand}"
+                                PositionX="{Binding Position.X}"
+                                PositionY="{Binding Position.Y}"
+                                >
+
+                        </component:MiniMap>
+                    </Grid>
                 </Grid>
 
                 <Grid Grid.Row="1">

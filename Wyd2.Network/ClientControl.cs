@@ -115,6 +115,16 @@ namespace WYD2.Control
             Connection.Send(W2Marshal.GetBytes(new MChatMessagePacket(clientId, message)));
         }
 
+        public void Reborn(ushort clientId)
+        {
+            Connection.Send(W2Marshal.GetBytes(new MPacketSignal(0x291, clientId)));
+        }
+
+        public void UseTeleport(ushort clientId)
+        {
+            Connection.Send(W2Marshal.GetBytes(new MPacketSignal(0x290, clientId)));
+        }
+
         public void SendPacket<T>(ClientPacket<T> packet)
         {
             Connection.Send(W2Marshal.GetBytes(packet));
