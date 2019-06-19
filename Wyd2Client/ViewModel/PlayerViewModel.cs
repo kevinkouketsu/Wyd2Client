@@ -105,7 +105,7 @@ namespace Wyd2.Client.ViewModel
                 Model.IsPhysical = value;
 
                 Macro = new PhysicalMacro(Player, Mobs);
-                Macro.OnAttackMob += (a, b) =>
+                (Macro as MacroSystem).OnAttackMob += (a, b) =>
                 {
                     Client.SendPacket(b);
                 };
@@ -207,8 +207,10 @@ namespace Wyd2.Client.ViewModel
         private ClientControl Client { get; set; }
 
         private DispatcherTimer Timer { get; } = new DispatcherTimer();
+            
+        private IMacro Macro { get; set; }
+        private IMacro MacroBuff { get; set; }
 
-        private MacroSystem Macro { get; set; }
         #endregion
 
         #region Constructor
@@ -218,6 +220,7 @@ namespace Wyd2.Client.ViewModel
             Player = new MPlayer();
 
             W2Objects.ItemList = ConfigReader.ReadItemList("ItemList.csv", "ItemEffect.h");
+            W2Objects.SkillList = ConfigReader.ReadSpellData("SkillData.csv");
 
             // Commands 
             MoveCommand = new RelayCommand(Movement, CanMovement);
@@ -242,16 +245,18 @@ namespace Wyd2.Client.ViewModel
                 DataContext = context
             };
 
-            //            await DialogHost.Show(window, "RootDialog");
+            await DialogHost.Show(window, "RootDialog");
 
-            context.Login = "bodecardoso2";
-            context.Token = "1208";
+            //context.Login = "bodecardoso";
+            //context.Token = "1208";
 
             Username = context.Login;
-            Password = "kevin123";//(window as IHavePassword).Password;
+            Password = (window as IHavePassword).Password;
             Token = context.Token;
 
-            context.SelectedServer = context.ServerList[2];
+            if (Network != null)
+                Network.Dispose();
+
             Network = new ClientConnection(context.SelectedServer.IpAddress, 8281);
             Client = new ClientControl(Network);
 
@@ -299,7 +304,7 @@ namespace Wyd2.Client.ViewModel
             if (!IsPhysical && !IsMagical)
                 return;
 
-            //Macro.DoMacro();
+            Macro.DoMacro();
         }
 
         #endregion
@@ -404,6 +409,7 @@ namespace Wyd2.Client.ViewModel
                 DialogHost.CloseDialogCommand.Execute(null, null);
             }, e);
 
+            State = TPlayerState.Token;
             SelChar = e.SelChar;
             Messages.Add(new TMessage("A tela de seleção de personagens foi atualizada", TMessage.SystemColor));
         }
@@ -441,6 +447,8 @@ namespace Wyd2.Client.ViewModel
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
             Client.Login(Username, Password,762);
+
+            State = TPlayerState.Hello;
         }
 
         private void Network_OnSucessfullLogin(object sender, MLoginSuccessfulPacket e)
@@ -567,13 +575,22 @@ namespace Wyd2.Client.ViewModel
                 case 412:
                     message = "Conta bloqueada por 3 horas";
                     break;
+                case 191:
+                    message = "Servidor cheio";
+                    break;
             }
 
             if (message == string.Empty)
                 return;
+
             _synchronizationContext.Send(async (a) =>
             {
                 await DialogHost.Show(new GameMessage(message), "RootDialog");
+
+                if (State == TPlayerState.Hello)
+                {
+                    Start();
+                }
             }, e);
         }
 

@@ -28,7 +28,7 @@ namespace WYD2.Common.IncomingPacketStructure
 
         public int NextMovement;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 116)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
         public byte[] Unknow_1;
 
         public short SlotIndex;

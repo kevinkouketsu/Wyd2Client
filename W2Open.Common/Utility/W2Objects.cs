@@ -9,7 +9,8 @@ namespace WYD2.Common.Utility
 {
     public static class W2Objects
     {
-        public static Dictionary<int, MItemList> ItemList { get; set; }
+        public static Dictionary<int, MItemData> ItemList { get; set; }
+        public static Dictionary<int, MSpellData> SkillList { get; set; }
 
         public static int GetMaxAbility(MMobCore mob, int eff)
         {
@@ -116,6 +117,10 @@ namespace WYD2.Common.Utility
         {
             int result = 0;
             int itemId = item.Index;
+
+            if (!ItemList.ContainsKey(itemId))
+                return 0;
+
             int unique = ItemList[itemId].Unique;
             int pos = ItemList[itemId].Pos;
 

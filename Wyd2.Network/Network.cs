@@ -24,7 +24,7 @@ namespace WYD2.Control
         public int PacketSize;
     }
 
-    public abstract class TcpBase
+    public abstract class TcpBase : IDisposable
     {
         public object _locker = new object();
         protected event EventHandler<EventArgs> OnSuccessfullConnect;
@@ -157,6 +157,11 @@ namespace WYD2.Control
             {
                 throw e;
             }
+        }
+
+        public void Dispose()
+        {
+            State?.workSocket.Dispose();
         }
     }
 }

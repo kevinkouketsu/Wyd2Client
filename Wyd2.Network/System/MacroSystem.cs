@@ -11,7 +11,7 @@ using WYD2.Common.Utility;
 
 namespace WYD2.Control.System
 {
-    public abstract class MacroSystem
+    public abstract class MacroSystem : IMacro
     {
         public struct Enemy
         {
