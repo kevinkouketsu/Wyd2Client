@@ -25,6 +25,11 @@ namespace Wyd2.Client.ViewModel
     {
         #region Public Properties
 
+        public IList<Component.MiniMapPositionName> Positions { get; } = new ObservableCollection<Component.MiniMapPositionName>()
+        {
+            new Component.MiniMapPositionName(new Point(1900, 1900), new Point(2100, 2100), "Armia")
+        };
+
         public MPlayer Player { get; }
 
         public string SelectedCharlistCharacter
@@ -260,7 +265,7 @@ namespace Wyd2.Client.ViewModel
             Network = new ClientConnection(context.SelectedServer.IpAddress, 8281);
             Client = new ClientControl(Network);
 
-            Timer.Interval = new TimeSpan(0, 0, 0, 0, 1500);
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
             Timer.Tick += Timer_Tick;
             Timer.Start();
 

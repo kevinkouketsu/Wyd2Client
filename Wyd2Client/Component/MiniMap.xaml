@@ -28,8 +28,16 @@
                                     Foreground="White"
                                     Background="Green"
                                     Panel.ZIndex="1"
-                                    Text="{Binding PositionText, ElementName=parent}">
-                                </TextBlock>
+                                    Text="{Binding PositionText, ElementName=parent}"/>
+                                <TextBlock
+                                    Margin="8 2"
+                                    VerticalAlignment="Top"
+                                    HorizontalAlignment="Left"
+                                    Foreground="White"
+                                    Background="Green"
+                                    Panel.ZIndex="1"
+                                    Text="{Binding PositionName.Name, ElementName=parent}"/>
+
                                     <Image Source="{Binding MiniMapCropped, ElementName=parent}">
                                         <Image.LayoutTransform>
                                             <RotateTransform Angle="0"/>

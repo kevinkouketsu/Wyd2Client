@@ -16,6 +16,28 @@ using System.Windows.Shapes;
 
 namespace Wyd2.Client.Component
 {
+    public struct MiniMapPositionName
+    {
+        public Point Minimum { get; }
+        public Point Maximum { get; }
+        public string Name { get; }
+
+        public MiniMapPositionName(Point minimum, Point maximum, string name)
+        {
+            Minimum = minimum;
+            Maximum = maximum;
+
+            Name = name;
+        }
+
+        public MiniMapPositionName(string name)
+        {
+            Minimum = new Point(0, 0);
+            Maximum = new Point(4096, 4096);
+
+            Name = name;
+        }
+    }
     /// <summary>
     /// Interação lógica para MiniMap.xam
     /// </summary>
@@ -36,9 +58,26 @@ namespace Wyd2.Client.Component
         public static readonly DependencyProperty MinimapZoomProperty =
             DependencyProperty.Register("MinimapZoom", typeof(int), typeof(MiniMap), new PropertyMetadata(50, new PropertyChangedCallback(new PropertyChangedCallback(MiniMapZoomChanged))));
 
-        // Using a DependencyProperty as the backing store for PositionText.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PositionTextProperty =
             DependencyProperty.Register("PositionText", typeof(string), typeof(MiniMap), new PropertyMetadata(""));
+
+        public static readonly DependencyProperty PositionNamesProperty =
+            DependencyProperty.Register("PositionNames", typeof(IList<MiniMapPositionName>), typeof(MiniMap), new PropertyMetadata(null));
+
+        public static readonly DependencyProperty PositionNameProperty =
+            DependencyProperty.Register("PositionName", typeof(MiniMapPositionName), typeof(MiniMap), new PropertyMetadata(null));
+
+        public MiniMapPositionName PositionName
+        {
+            get { return (MiniMapPositionName)GetValue(PositionNameProperty); }
+            set { SetValue(PositionNameProperty, value); }
+        }
+
+        public IList<MiniMapPositionName> PositionNames
+        {
+            get { return (IList<MiniMapPositionName>)GetValue(PositionNamesProperty); }
+            set { SetValue(PositionNamesProperty, value); }
+        }
 
         public CroppedBitmap MiniMapCropped
         {
@@ -79,12 +118,30 @@ namespace Wyd2.Client.Component
         {
             var obj = d as MiniMap;
             obj.CropMiniMap(obj.PositionX, (int)e.NewValue);
+            obj.RefreshPositionName();
         }
 
         private static void PositionXChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var obj = d as MiniMap;
             obj.CropMiniMap((int)e.NewValue, obj.PositionY);
+
+            obj.RefreshPositionName();
+        }
+
+        private void RefreshPositionName()
+        {
+            foreach (var i in PositionNames)
+            {
+                if (PositionX >= i.Minimum.X && PositionX <= i.Maximum.X && PositionY >= i.Minimum.Y && PositionY <= i.Maximum.Y)
+                {
+                    PositionName = i;
+
+                    return;
+                }
+            }
+
+            PositionName = new MiniMapPositionName("Desconhecido");
         }
 
         private void CropMiniMap(int posX, int posY)
@@ -146,7 +203,6 @@ namespace Wyd2.Client.Component
 
             double getPixelSizeHeight = heightByZoom;
             double getPixelSizeWidth = widthByZoom;
-
 
             Point basedOnMouse = new Point();
             basedOnMouse.X = teste.X / getPixelSizeHeight;

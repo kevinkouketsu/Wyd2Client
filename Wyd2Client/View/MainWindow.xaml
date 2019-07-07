@@ -150,8 +150,7 @@
                                 MoveCommand="{Binding MoveCommand}"
                                 PositionX="{Binding Position.X}"
                                 PositionY="{Binding Position.Y}"
-                                >
-
+                                 PositionNames="{Binding Positions}">
                         </component:MiniMap>
                     </Grid>
                 </Grid>

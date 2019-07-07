@@ -59,6 +59,8 @@
     <Compile Include="LuaSystem.cs" />
     <Compile Include="System\BuffMacro.cs" />
     <Compile Include="System\IMacro.cs" />
+    <Compile Include="System\MacroDispatcher.cs" />
+    <Compile Include="System\MacroDispatcherHandle.cs" />
     <Compile Include="System\MacroSystem.cs" />
     <Compile Include="Network.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
