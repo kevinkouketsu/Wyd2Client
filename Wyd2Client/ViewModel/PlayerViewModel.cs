@@ -27,7 +27,16 @@ namespace Wyd2.Client.ViewModel
 
         public IList<Component.MiniMapPositionName> Positions { get; } = new ObservableCollection<Component.MiniMapPositionName>()
         {
-            new Component.MiniMapPositionName(new Point(1900, 1900), new Point(2100, 2100), "Armia")
+            new Component.MiniMapPositionName(new Point(2052, 2052), new Point(2171, 2163), "Armia"),
+            new Component.MiniMapPositionName(new Point(2432, 1672), new Point(2675, 1767), "Arzan"),
+            new Component.MiniMapPositionName(new Point(2448, 1966), new Point(2476, 2024), "Erion"),
+            new Component.MiniMapPositionName(new Point(3605, 3090), new Point(3690, 3260), "Nippleheim"),
+            new Component.MiniMapPositionName(new Point(1036, 1700), new Point(1072, 1760), "Noatun"),
+            new Component.MiniMapPositionName(new Point(1072, 1679), new Point(1665, 1925), "Deserto"),
+            new Component.MiniMapPositionName(new Point(1663, 1537), new Point(1798, 1701), "Reino Red"),
+            new Component.MiniMapPositionName(new Point(1663, 1750), new Point(1798, 1920), "Reino Blue"),
+            new Component.MiniMapPositionName(new Point(1678, 1678), new Point(1801, 1791), "Reino Central"),
+
         };
 
         public MPlayer Player { get; }
@@ -220,6 +229,7 @@ namespace Wyd2.Client.ViewModel
 
         #region Constructor
 
+        public ICommand TesteICommand { get; }
         public PlayerViewModel()
         {
             Player = new MPlayer();
@@ -234,6 +244,13 @@ namespace Wyd2.Client.ViewModel
                 Messages.Clear();
             }, (a) => true);
 
+            TesteICommand = new RelayCommand(() =>
+            {
+                int rnd = (short)W2Random.Instance.Next(0, 20) + (short)4000;
+                Client.Movement(Player.ClientId, Position, new MPosition((short)rnd, 4000),1, Player.Mob.FinalScore.MovementSpeed);
+
+                Position = new MPosition((short)rnd, 4000);
+            }, () => true);
             SendMessageCommand = new RelayCommand(SendMessage, (b) => State == TPlayerState.Play);
 
             Start();

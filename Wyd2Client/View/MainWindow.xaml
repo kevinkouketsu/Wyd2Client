@@ -51,6 +51,8 @@
                     <Separator/>
                     <MenuItem Header="Configuração"
                               Command="{Binding ConfigMacroComand}"/>
+                    <MenuItem Header="Teste"
+                              Command="{Binding TesteICommand}"/>
                 </MenuItem>
             </Menu>
             <Grid>
