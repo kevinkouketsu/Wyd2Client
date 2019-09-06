@@ -49,7 +49,7 @@
     <Compile Include="GameBasics.cs" />
     <Compile Include="GameStructure\MAffect.cs" />
     <Compile Include="GameStructure\MItemEffectDefinition.cs" />
-    <Compile Include="GameStructure\MItemList.cs" />
+    <Compile Include="GameStructure\MItemData.cs" />
     <Compile Include="GameStructure\MMob.cs" />
     <Compile Include="GameStructure\MPlayer.cs" />
     <Compile Include="GameStructure\MPosition.cs" />
@@ -58,6 +58,7 @@
     <Compile Include="GameStructure\MPacketHeader.cs" />
     <Compile Include="GameStructure\MScore.cs" />
     <Compile Include="GameStructure\MSelChar.cs" />
+    <Compile Include="GameStructure\MSpellData.cs" />
     <Compile Include="IncomingPacketStructure\MCharToWorldPacket.cs" />
     <Compile Include="IncomingPacketStructure\MChatMessagePacket.cs" />
     <Compile Include="IncomingPacketStructure\MCreateMobPacket.cs" />

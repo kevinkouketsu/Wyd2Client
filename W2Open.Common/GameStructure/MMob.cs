@@ -28,7 +28,7 @@ namespace WYD2.Common.GameStructure
         /// <summary>
         /// Current status of mob
         /// </summary>
-        public MScore Score { get; set; }
+        public MScore Score;
 
         #endregion
 

@@ -12,25 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Wyd2.Client.ViewModel;
-using WYD2.Control;
 
 namespace Wyd2.Client.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MacroConfigWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MacroConfigWindow : UserControl
     {
-        public Random rand = new Random();
-        public MainWindow()
+        public MacroConfigWindow()
         {
             InitializeComponent();
-        }
-
-        private void DialogHost_Loaded(object sender, RoutedEventArgs e)
-        {
-            DataContext = new PlayerViewModel();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace WYD2.Common.GameStructure
         public ushort Value;
     }
 
-    public struct MItemList
+    public struct MItemData
     {
         public String Name;
 

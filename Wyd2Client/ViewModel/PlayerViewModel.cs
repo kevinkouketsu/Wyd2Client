@@ -25,6 +25,20 @@ namespace Wyd2.Client.ViewModel
     {
         #region Public Properties
 
+        public IList<Component.MiniMapPositionName> Positions { get; } = new ObservableCollection<Component.MiniMapPositionName>()
+        {
+            new Component.MiniMapPositionName(new Point(2052, 2052), new Point(2171, 2163), "Armia"),
+            new Component.MiniMapPositionName(new Point(2432, 1672), new Point(2675, 1767), "Arzan"),
+            new Component.MiniMapPositionName(new Point(2448, 1966), new Point(2476, 2024), "Erion"),
+            new Component.MiniMapPositionName(new Point(3605, 3090), new Point(3690, 3260), "Nippleheim"),
+            new Component.MiniMapPositionName(new Point(1036, 1700), new Point(1072, 1760), "Noatun"),
+            new Component.MiniMapPositionName(new Point(1072, 1679), new Point(1665, 1925), "Deserto"),
+            new Component.MiniMapPositionName(new Point(1663, 1537), new Point(1798, 1701), "Reino Red"),
+            new Component.MiniMapPositionName(new Point(1663, 1750), new Point(1798, 1920), "Reino Blue"),
+            new Component.MiniMapPositionName(new Point(1678, 1678), new Point(1801, 1791), "Reino Central"),
+
+        };
+
         public MPlayer Player { get; }
 
         public string SelectedCharlistCharacter
@@ -99,10 +113,13 @@ namespace Wyd2.Client.ViewModel
             get => Model.IsPhysical;
             set
             {
+                if (value)
+                    IsMagical = false;
+
                 Model.IsPhysical = value;
 
                 Macro = new PhysicalMacro(Player, Mobs);
-                Macro.OnAttackMob += (a, b) =>
+                (Macro as MacroSystem).OnAttackMob += (a, b) =>
                 {
                     Client.SendPacket(b);
                 };
@@ -123,7 +140,6 @@ namespace Wyd2.Client.ViewModel
         }
 
         #region Character information
-
         public string Name
         {
             get => Player.Mob.Name;
@@ -187,43 +203,88 @@ namespace Wyd2.Client.ViewModel
 
         public MainWindowModel Model { get; } = new MainWindowModel();
 
-        public ICommand MovementCommand { get; }
         public ICommand SendMessageCommand { get; }
         public ICommand EnterCommand { get; }
+        public ICommand CleanMessagesCommand { get; }
+        public ICommand MoveCommand { get; }
         #endregion
 
         #region Private Properties
 
         private SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
 
-        private ClientConnection Network { get; }
+        private string Username { get; set; }
+        public string Password { get; set; }
+        public string Token { get; set; }
+
+        private ClientConnection Network { get; set; }
         private ClientControl Client { get; set; }
 
-        private DispatcherTimer Timer { get; }
+        private DispatcherTimer Timer { get; } = new DispatcherTimer();
+            
+        private IMacro Macro { get; set; }
+        private IMacro MacroBuff { get; set; }
 
-        private MacroSystem Macro { get; set; }
         #endregion
 
         #region Constructor
 
+        public ICommand TesteICommand { get; }
         public PlayerViewModel()
         {
             Player = new MPlayer();
 
             W2Objects.ItemList = ConfigReader.ReadItemList("ItemList.csv", "ItemEffect.h");
-
-            Network = new ClientConnection("51.81.0.90", 8281);
-            Client = new ClientControl(Network);
-
-            Timer = new DispatcherTimer();
-            Timer.Interval = new TimeSpan(0, 0, 0, 0, 1500);
-            Timer.Tick += Timer_Tick;
-            Timer.Start();
+            W2Objects.SkillList = ConfigReader.ReadSpellData("SkillData.csv");
 
             // Commands 
-            MovementCommand = new RelayCommand(Movement, CanMovement);
+            MoveCommand = new RelayCommand(Movement, CanMovement);
+            CleanMessagesCommand = new RelayCommand((a) =>
+            {
+                Messages.Clear();
+            }, (a) => true);
 
-            SendMessageCommand = new RelayCommand(SendMessage, (b) => true);
+            TesteICommand = new RelayCommand(() =>
+            {
+                int rnd = (short)W2Random.Instance.Next(0, 20) + (short)4000;
+                Client.Movement(Player.ClientId, Position, new MPosition((short)rnd, 4000),1, Player.Mob.FinalScore.MovementSpeed);
+
+                Position = new MPosition((short)rnd, 4000);
+            }, () => true);
+            SendMessageCommand = new RelayCommand(SendMessage, (b) => State == TPlayerState.Play);
+
+            Start();
+        }
+
+        #endregion
+
+        #region Start connection
+        public async void Start()
+        {
+            LoginWindowViewModel context = new LoginWindowViewModel();
+            LoginWindow window = new LoginWindow()
+            {
+                DataContext = context
+            };
+
+            await DialogHost.Show(window, "RootDialog");
+
+            //context.Login = "bodecardoso";
+            //context.Token = "1208";
+
+            Username = context.Login;
+            Password = (window as IHavePassword).Password;
+            Token = context.Token;
+
+            if (Network != null)
+                Network.Dispose();
+
+            Network = new ClientConnection(context.SelectedServer.IpAddress, 8281);
+            Client = new ClientControl(Network);
+
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 200);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
 
             Network.OnSuccessfullConnect += this.Network_OnSuccessfullConnect;
             Network.OnDisconnect += this.Network_OnDisconnect;
@@ -253,9 +314,7 @@ namespace Wyd2.Client.ViewModel
 
             Network.Connect();
         }
-
         #endregion
-
         #region Timer
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -275,29 +334,21 @@ namespace Wyd2.Client.ViewModel
 
         private bool CanMovement(object arg)
         {
-            return true;
+            return State == TPlayerState.Play;
         }
 
         private void Movement(object obj)
         {
-            string cmd = obj as string;
-            if (cmd == null)
-                throw new Exception();
+            var local = (Point)obj;
 
-            MPosition pos = Position;
-            if (cmd == "Up")
-                pos.Y++;
-            else if (cmd == "Down")
-                pos.Y--;
-            else if (cmd == "Right")
-                pos.X++;
-            else
-                pos.X--;
+            MPosition finalPosition = new MPosition();
+            finalPosition.X = (short)local.X;
+            finalPosition.Y = (short)local.Y;
 
-            Client.Movement(Player.ClientId, Player.Position, pos, 0, Player.Mob.FinalScore.MovementSpeed);
-            //Client.SingleAttack(Player.ClientId, Player.Position, Player.Position, new WYD2.Common.OutgoingPacketStructure.MTarget(Player.ClientId, -1), 64);
-            Messages.Add(new TMessage($"Movimentado de {Player.Position } para { pos } ", TMessage.NormalColor));
-            Position = pos;
+            Client.Movement(Player.ClientId, Player.Position, finalPosition, 0, Player.Mob.FinalScore.MovementSpeed);
+
+            Messages.Add(new TMessage($"Movido para { finalPosition }", TMessage.NormalColor));
+            Position = finalPosition;
         }
 
         private void SendMessage(object obj)
@@ -315,6 +366,11 @@ namespace Wyd2.Client.ViewModel
 
                 Client.SendCommand(Player.ClientId, command, onlyMessage);
                 Messages.Add(new TMessage(TMessage.NormalChat(Player.Mob.Name, onlyMessage), TMessage.WhisperColor));
+            }
+            else if(message[0] == '#')
+            {
+                if (message == "#tele")
+                    Client.UseTeleport(Player.ClientId);
             }
             else
             {
@@ -346,6 +402,8 @@ namespace Wyd2.Client.ViewModel
                 _synchronizationContext.Send(async (a) =>
                 {
                     await DialogHost.Show(new GameMessage("Você morreu"), "RootDialog");
+
+                    Client.Reborn(Player.ClientId);
                 }, e);
             }
             else
@@ -373,6 +431,7 @@ namespace Wyd2.Client.ViewModel
                 DialogHost.CloseDialogCommand.Execute(null, null);
             }, e);
 
+            State = TPlayerState.Token;
             SelChar = e.SelChar;
             Messages.Add(new TMessage("A tela de seleção de personagens foi atualizada", TMessage.SystemColor));
         }
@@ -409,7 +468,9 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
-            Client.Login("brotheragem", "bunda123", 762);
+            Client.Login(Username, Password,762);
+
+            State = TPlayerState.Hello;
         }
 
         private void Network_OnSucessfullLogin(object sender, MLoginSuccessfulPacket e)
@@ -418,7 +479,7 @@ namespace Wyd2.Client.ViewModel
             AccountName = e.AccName;
 
             PacketSecurity.HashTable = e.HashKeyTable;
-            Client.SendToken("1208", 0);
+            Client.SendToken(Token, 0);
 
             Player.State = TPlayerState.SelChar;
         }
@@ -533,13 +594,25 @@ namespace Wyd2.Client.ViewModel
                 case 161:
                     message = "Conta em análise";
                     break;
+                case 412:
+                    message = "Conta bloqueada por 3 horas";
+                    break;
+                case 191:
+                    message = "Servidor cheio";
+                    break;
             }
 
             if (message == string.Empty)
                 return;
+
             _synchronizationContext.Send(async (a) =>
             {
                 await DialogHost.Show(new GameMessage(message), "RootDialog");
+
+                if (State == TPlayerState.Hello)
+                {
+                    Start();
+                }
             }, e);
         }
 
@@ -580,7 +653,7 @@ namespace Wyd2.Client.ViewModel
                 if (mob == null)
                     return;
 
-                //mob.Score.CurrHp -= damage;
+                mob.Score.CurrHp -= damage;
             }
         }
 
