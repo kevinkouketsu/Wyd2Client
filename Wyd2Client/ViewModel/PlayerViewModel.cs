@@ -286,6 +286,7 @@ namespace Wyd2.Client.ViewModel
             Timer.Tick += Timer_Tick;
             Timer.Start();
 
+            // Registra os eventos
             Network.OnSuccessfullConnect += this.Network_OnSuccessfullConnect;
             Network.OnDisconnect += this.Network_OnDisconnect;
             Network.OnReceiveSucessfullLogin += this.Network_OnSucessfullLogin;
@@ -468,7 +469,7 @@ namespace Wyd2.Client.ViewModel
 
         private void Network_OnSuccessfullConnect(object sender, EventArgs e)
         {
-            Client.Login(Username, Password,762);
+            Client.Login(Username, Password,763);
 
             State = TPlayerState.Hello;
         }
