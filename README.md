@@ -13,13 +13,17 @@ Atualmente este cliente pode:
 * Deletar personagens
 * Logar em personagem 
 * Andar pelo jogo
-* Usar teleportes
+* Usar teleportes 
 * Ativar macro 
+- Reconhecimento de chat normal / whisper
+- Enviar mensagens no chat normal e whisper 
 
 O macro está bem básico. E só funciona para personagens físicos. A ideia foi criar um dispatcher de macros e uma interface genérica para adicionar numa lista que vai iterar sobre todos os macros.
 Sendo assim, teríamos um sistema de fácil inclusão de novos macros. Com isto, macros eventos, macros de buff, macros de qualquer situação seriam produzidos facilmente.
 
 O sistema está preparado para logar no WYD Global (oficial RaidHut). 
+
+Para teleportar, basta digitar no chat: #tele. 
 
 ## Imagens
 Tela de login. Escolha um canal na lista, digite seu nome de usuário, senha e senha numérica.
