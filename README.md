@@ -5,17 +5,18 @@ Este é um simulador de cliente feito em C#, WPF usando um pouco do pattern MVVM
 A ideia do projeto é poder implementar em qualquer outra aplicação facilmente. Foi criada através de eventos. Basta referenciar a Wyd2.Control em seu projeto próprio e utilizar dos benefícios dos eventos.
 
 ## Funções
+
 Atualmente este cliente pode:   
 
-- Logar em uma conta
-- Criar personagens
-- Deletar personagens
-- Logar em personagem 
-- Andar pelo jogo
-- Usar teleportes
-- Ativar macro *
+* Logar em uma conta
+* Criar personagens
+* Deletar personagens
+* Logar em personagem 
+* Andar pelo jogo
+* Usar teleportes
+* Ativar macro 
 
-* O macro está bem básico. E só funciona para personagens físicos. A ideia foi criar um dispatcher de macros e uma interface genérica para adicionar numa lista que vai iterar sobre todos os macros.
+O macro está bem básico. E só funciona para personagens físicos. A ideia foi criar um dispatcher de macros e uma interface genérica para adicionar numa lista que vai iterar sobre todos os macros.
 Sendo assim, teríamos um sistema de fácil inclusão de novos macros. Com isto, macros eventos, macros de buff, macros de qualquer situação seriam produzidos facilmente.
 
 O sistema está preparado para logar no WYD Global (oficial RaidHut). 
